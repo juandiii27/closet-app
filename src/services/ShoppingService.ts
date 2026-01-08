@@ -123,7 +123,7 @@ export const ShoppingService = {
 
         // Analyze Closet
         const hasShoes = userCloset.some(item => item.category === 'Shoes');
-        const hasBottoms = userCloset.some(item => item.category === 'Bottoms');
+
         const hasOuterwear = userCloset.some(item => item.category === 'Outerwear');
 
         // Filter/Prioritize recommendations
