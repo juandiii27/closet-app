@@ -59,7 +59,7 @@ export function StyleSwipe({ onComplete }: StyleSwipeProps) {
     }
 
     return (
-        <div className="flex flex-col items-center w-full max-w-md mx-auto h-[650px]">
+        <div className="flex flex-col items-center w-full max-w-sm mx-auto h-[700px]">
             {/* Progress Bar */}
             <div className="w-full h-1 bg-gray-100 rounded-full mb-6 relative overflow-hidden">
                 <div
@@ -83,13 +83,20 @@ export function StyleSwipe({ onComplete }: StyleSwipeProps) {
                         exit={{ scale: 0.95, opacity: 0 }}
                         className="absolute inset-0 bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col"
                     >
-                        {/* Image takes up more space now (85%) */}
-                        <div className="relative h-[85%] w-full">
+                        {/* Image takes up FULL space now */}
+                        <div className="relative h-full w-full">
                             <img
                                 src={currentStyle.image}
                                 alt={currentStyle.name}
                                 className="w-full h-full object-cover"
                             />
+
+                            {/* Text Overlay with Gradient */}
+                            <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6">
+                                <h3 className="text-3xl font-serif font-bold text-white">{currentStyle.name}</h3>
+                                <p className="text-sm text-gray-200 mt-1 uppercase tracking-widest font-medium">Style Collection</p>
+                            </div>
+
                             {/* Overlay Indicators */}
                             {direction === 'right' && (
                                 <div className="absolute top-8 left-8 border-4 border-green-500 text-green-500 rounded-lg px-4 py-2 text-2xl font-bold uppercase transform -rotate-12 bg-white/80">
@@ -102,28 +109,23 @@ export function StyleSwipe({ onComplete }: StyleSwipeProps) {
                                 </div>
                             )}
                         </div>
-
-                        <div className="h-[15%] flex flex-col items-center justify-center p-4 bg-white">
-                            <h3 className="text-2xl font-serif font-bold text-gray-900">{currentStyle.name}</h3>
-                            <p className="text-sm text-gray-400 mt-1 uppercase tracking-widest">Style Collection</p>
-                        </div>
                     </motion.div>
                 </AnimatePresence>
             </div>
 
-            {/* Controls moved to bottom (replacing text) */}
-            <div className="flex items-center gap-10 mt-2">
+            {/* Controls */}
+            <div className="flex items-center gap-12 mt-4">
                 <button
                     onClick={() => handleVote(false)}
-                    className="w-14 h-14 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-red-500 hover:bg-red-50 hover:scale-105 transition-all"
+                    className="w-16 h-16 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-red-500 hover:bg-red-50 hover:scale-105 transition-all"
                 >
-                    <X className="w-6 h-6" />
+                    <X className="w-8 h-8" />
                 </button>
                 <button
                     onClick={() => handleVote(true)}
-                    className="w-14 h-14 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-green-500 hover:bg-green-50 hover:scale-110 transition-all font-bold"
+                    className="w-16 h-16 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-green-500 hover:bg-green-50 hover:scale-110 transition-all font-bold"
                 >
-                    <Heart className="w-6 h-6 fill-current" />
+                    <Heart className="w-8 h-8 fill-current" />
                 </button>
             </div>
         </div>
