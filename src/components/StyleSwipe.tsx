@@ -59,7 +59,7 @@ export function StyleSwipe({ onComplete }: StyleSwipeProps) {
     }
 
     return (
-        <div className="flex flex-col items-center w-full max-w-sm mx-auto h-[600px]">
+        <div className="flex flex-col items-center w-full max-w-md mx-auto h-[650px]">
             {/* Progress Bar */}
             <div className="w-full h-1 bg-gray-100 rounded-full mb-6 relative overflow-hidden">
                 <div
@@ -68,7 +68,7 @@ export function StyleSwipe({ onComplete }: StyleSwipeProps) {
                 />
             </div>
 
-            <div className="relative w-full flex-1 mb-8">
+            <div className="relative w-full flex-1 mb-6">
                 <AnimatePresence mode='wait'>
                     <motion.div
                         key={currentStyle.id}
@@ -80,51 +80,52 @@ export function StyleSwipe({ onComplete }: StyleSwipeProps) {
                             rotate: direction === 'left' ? -10 : direction === 'right' ? 10 : 0,
                             transition: { duration: 0.3 }
                         }}
-                        exit={{ scale: 0.95, opacity: 0 }} // Don't animate exit to keep it snappy or we need absolute positioning overlap
-                        className="absolute inset-0 bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100"
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        className="absolute inset-0 bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col"
                     >
-                        <img
-                            src={currentStyle.image}
-                            alt={currentStyle.name}
-                            className="w-full h-[75%] object-cover"
-                        />
-                        <div className="h-[25%] flex flex-col items-center justify-center p-4 bg-white">
+                        {/* Image takes up more space now (85%) */}
+                        <div className="relative h-[85%] w-full">
+                            <img
+                                src={currentStyle.image}
+                                alt={currentStyle.name}
+                                className="w-full h-full object-cover"
+                            />
+                            {/* Overlay Indicators */}
+                            {direction === 'right' && (
+                                <div className="absolute top-8 left-8 border-4 border-green-500 text-green-500 rounded-lg px-4 py-2 text-2xl font-bold uppercase transform -rotate-12 bg-white/80">
+                                    LIKE
+                                </div>
+                            )}
+                            {direction === 'left' && (
+                                <div className="absolute top-8 right-8 border-4 border-red-500 text-red-500 rounded-lg px-4 py-2 text-2xl font-bold uppercase transform rotate-12 bg-white/80">
+                                    NOPE
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="h-[15%] flex flex-col items-center justify-center p-4 bg-white">
                             <h3 className="text-2xl font-serif font-bold text-gray-900">{currentStyle.name}</h3>
                             <p className="text-sm text-gray-400 mt-1 uppercase tracking-widest">Style Collection</p>
                         </div>
-
-                        {/* Overlay Indicators for Swipe feedback */}
-                        {direction === 'right' && (
-                            <div className="absolute top-8 left-8 border-4 border-green-500 text-green-500 rounded-lg px-4 py-2 text-2xl font-bold uppercase transform -rotate-12 bg-white/80">
-                                LIKE
-                            </div>
-                        )}
-                        {direction === 'left' && (
-                            <div className="absolute top-8 right-8 border-4 border-red-500 text-red-500 rounded-lg px-4 py-2 text-2xl font-bold uppercase transform rotate-12 bg-white/80">
-                                NOPE
-                            </div>
-                        )}
                     </motion.div>
                 </AnimatePresence>
             </div>
 
-            {/* Controls */}
-            <div className="flex items-center gap-8 mb-4">
+            {/* Controls moved to bottom (replacing text) */}
+            <div className="flex items-center gap-10 mt-2">
                 <button
                     onClick={() => handleVote(false)}
-                    className="w-16 h-16 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-red-500 hover:bg-red-50 hover:scale-105 transition-all"
+                    className="w-14 h-14 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-red-500 hover:bg-red-50 hover:scale-105 transition-all"
                 >
-                    <X className="w-8 h-8" />
+                    <X className="w-6 h-6" />
                 </button>
                 <button
                     onClick={() => handleVote(true)}
-                    className="w-16 h-16 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-green-500 hover:bg-green-50 hover:scale-110 transition-all font-bold"
+                    className="w-14 h-14 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-green-500 hover:bg-green-50 hover:scale-110 transition-all font-bold"
                 >
-                    <Heart className="w-8 h-8 fill-current" />
+                    <Heart className="w-6 h-6 fill-current" />
                 </button>
             </div>
-
-            <p className="text-gray-400 text-xs text-center pb-4">Swipe or click buttons to decide</p>
         </div>
     );
 }

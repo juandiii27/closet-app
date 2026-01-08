@@ -112,14 +112,7 @@ export default function Onboarding() {
                             />
                         </div>
 
-                        <div className="flex justify-center">
-                            <button
-                                onClick={() => setStep(1)}
-                                className="text-sm text-gray-400 hover:text-gray-600 underline"
-                            >
-                                Back to Avatar
-                            </button>
-                        </div>
+                        {/* Back button removed as per design change */}
                     </div>
                 )}
             </Card>
