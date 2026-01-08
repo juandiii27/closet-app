@@ -4,13 +4,13 @@ import { X, Heart, Check } from 'lucide-react';
 
 const STYLES = [
     { id: 'streetwear', name: 'Streetwear', image: 'https://i.pinimg.com/736x/2f/74/82/2f7482e50ce55cbf9cdb04b221f596e4.jpg' }, // Outfit Grid
-    { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1548883354-94bcfe321cbb?auto=format&fit=crop&w=600&q=80' },
+    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/736x/4b/98/c4/4b98c44d99874293c193ed03102018c1.jpg' }, // Outfit Grid
     { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1550614000-4b9519e07d72?auto=format&fit=crop&w=600&q=80' },
     { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/736x/4f/98/86/4f9886cae933b901614d7249aab8b1c5.jpg' }, // Outfit Grid
     { id: 'y2k', name: 'Y2K', image: 'https://i.pinimg.com/736x/6b/8b/5f/6b8b5fa84424338a0881298063c299b9.jpg' }, // Outfit Grid
     { id: 'boho', name: 'Boho', image: 'https://i.pinimg.com/736x/de/6b/d5/de6bd5cdbd9d9955eb38a36c2b86fe05.jpg' }, // Outfit Grid
-    { id: 'casual', name: 'Casual', image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80' },
-    { id: 'formal', name: 'Formal', image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80' },
+    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/736x/b6/e6/7e/b6e67e23eccb73cf8b07eaf060431373.jpg' }, // Outfit Grid
+    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/736x/ec/c9/02/ecc902d1945b45a038f0409478d2df64.jpg' }, // Outfit Grid
 ];
 
 interface StyleSwipeProps {
@@ -86,7 +86,7 @@ export function StyleSwipe({ onComplete }: StyleSwipeProps) {
                         <img
                             src={currentStyle.image}
                             alt={currentStyle.name}
-                            className="w-full h-[75%] object-cover"
+                            className="w-full h-[75%] object-contain bg-gray-50"
                         />
                         <div className="h-[25%] flex flex-col items-center justify-center p-4 bg-white">
                             <h3 className="text-2xl font-serif font-bold text-gray-900">{currentStyle.name}</h3>
