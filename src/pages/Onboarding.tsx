@@ -21,7 +21,7 @@ const ANIMALS = [
 ];
 
 export default function Onboarding() {
-    const { updateProfile } = useAuth();
+    const { updateProfile, profile } = useAuth();
     // const navigate = useNavigate();
 
     const [step, setStep] = useState<1 | 2>(1);
@@ -109,6 +109,7 @@ export default function Onboarding() {
                         <div className="mb-6">
                             <StyleSwipe
                                 onComplete={handleComplete}
+                                gender={profile?.gender}
                             />
                         </div>
 

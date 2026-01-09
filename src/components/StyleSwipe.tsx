@@ -15,14 +15,23 @@ const STYLES = [
 
 interface StyleSwipeProps {
     onComplete: (selectedStyles: string[]) => void;
+    gender?: 'Mens' | 'Womens' | 'Unisex';
 }
 
-export function StyleSwipe({ onComplete }: StyleSwipeProps) {
+export function StyleSwipe({ onComplete, gender }: StyleSwipeProps) {
+    // Filter styles based on gender
+    const visibleStyles = STYLES.filter(style => {
+        if (gender === 'Mens') {
+            return !['boho', 'y2k'].includes(style.id);
+        }
+        return true; // Show all for Womens or Unisex
+    });
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
     const [direction, setDirection] = useState<'left' | 'right' | null>(null);
 
-    const currentStyle = STYLES[currentIndex];
+    const currentStyle = visibleStyles[currentIndex];
 
     const handleVote = (liked: boolean) => {
         setDirection(liked ? 'right' : 'left');
@@ -33,7 +42,7 @@ export function StyleSwipe({ onComplete }: StyleSwipeProps) {
                 setSelectedStyles(prev => [...prev, currentStyle.name]); // Save the readable name
             }
 
-            if (currentIndex < STYLES.length - 1) {
+            if (currentIndex < visibleStyles.length - 1) {
                 setCurrentIndex(prev => prev + 1);
                 setDirection(null);
             } else {
@@ -44,7 +53,7 @@ export function StyleSwipe({ onComplete }: StyleSwipeProps) {
         }, 300);
     };
 
-    if (currentIndex >= STYLES.length) {
+    if (currentIndex >= visibleStyles.length) {
         return (
             <div className="flex flex-col items-center justify-center h-full p-8 text-center">
                 <div className="bg-green-100 p-4 rounded-full mb-4">
@@ -64,7 +73,7 @@ export function StyleSwipe({ onComplete }: StyleSwipeProps) {
             <div className="w-full h-1 bg-gray-100 rounded-full mb-6 relative overflow-hidden">
                 <div
                     className="absolute h-full bg-black transition-all duration-300"
-                    style={{ width: `${((currentIndex) / STYLES.length) * 100}%` }}
+                    style={{ width: `${((currentIndex) / visibleStyles.length) * 100}%` }}
                 />
             </div>
 
