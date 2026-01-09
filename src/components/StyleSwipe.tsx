@@ -75,6 +75,10 @@ export function StyleSwipe({ onComplete, gender }: StyleSwipeProps) {
     return (
         <div className="flex flex-col items-center w-full max-w-sm mx-auto h-[700px]">
             {/* Progress Bar */}
+            {/* DEBUG: Temporary Gender Check */}
+            <div className="absolute top-0 right-0 p-2 bg-black/50 text-white text-[10px] z-50 rounded">
+                Gender: {gender || 'undefined'} | Styles: {currentStyleList.length}
+            </div>
             <div className="w-full h-1 bg-gray-100 rounded-full mb-6 relative overflow-hidden">
                 <div
                     className="absolute h-full bg-black transition-all duration-300"

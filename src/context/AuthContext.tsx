@@ -67,7 +67,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setUser(session?.user ?? null);
                 if (session?.user) {
                     const stored = localStorage.getItem(`profile_${session.user.id}`);
-                    if (stored) setProfile(JSON.parse(stored));
+                    if (stored) {
+                        setProfile(JSON.parse(stored));
+                    } else if (session.user.user_metadata?.gender) {
+                        // Fallback: recover profile from metadata if local storage is empty
+                        const meta = session.user.user_metadata;
+                        const recoveredProfile: UserProfile = {
+                            gender: meta.gender,
+                            onboardingCompleted: false, // Default to false if we lost local state, safer to re-onboard or check DB if we had one
+                            stylePreferences: []
+                        };
+                        setProfile(recoveredProfile);
+                        // Restore to local storage
+                        localStorage.setItem(`profile_${session.user.id}`, JSON.stringify(recoveredProfile));
+                    }
                 }
             } catch (error) {
                 console.error("Auth initialization error:", error);
