@@ -4,13 +4,13 @@ import { X, Heart, Check } from 'lucide-react';
 
 const WOMENS_STYLES = [
     { id: 'streetwear', name: 'Streetwear', image: 'https://i.pinimg.com/736x/2f/74/82/2f7482e50ce55cbf9cdb04b221f596e4.jpg' },
-    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/originals/df/70/dd/df70ddba61185b085c871f43d07d779f.jpg' },
-    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/originals/16/6a/26/166a26e12c60e08457b02278cbd2108e.jpg' },
+    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/736x/ec/d6/76/ecd676839d09c31405167f402c40049e.jpg' }, // Updated to 736x (was original)
+    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/736x/16/6a/26/166a26e12c60e08457b02278cbd2108e.jpg' }, // Updated to 736x
     { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/736x/4f/98/86/4f9886cae933b901614d7249aab8b1c5.jpg' },
     { id: 'y2k', name: 'Y2K', image: 'https://i.pinimg.com/736x/6b/8b/5f/6b8b5fa84424338a0881298063c299b9.jpg' },
     { id: 'boho', name: 'Boho', image: 'https://i.pinimg.com/736x/de/6b/d5/de6bd5cdbd9d9955eb38a36c2b86fe05.jpg' },
-    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/originals/82/4c/69/824c693d1806d231bb7f1a81bf6b71d9.jpg' },
-    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/originals/c8/0c/76/c80c762e855a2f0926768fd4bb0f3702.jpg' },
+    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/736x/82/4c/69/824c693d1806d231bb7f1a81bf6b71d9.jpg' }, // Updated to 736x
+    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/736x/c8/0c/76/c80c762e855a2f0926768fd4bb0f3702.jpg' }, // Updated to 736x
 ];
 
 const MENS_STYLES = [
