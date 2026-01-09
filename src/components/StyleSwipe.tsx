@@ -2,15 +2,24 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'; // Assuming framer-motion is installed as we used it in Shop.tsx
 import { X, Heart, Check } from 'lucide-react';
 
-const STYLES = [
-    { id: 'streetwear', name: 'Streetwear', image: 'https://i.pinimg.com/736x/2f/74/82/2f7482e50ce55cbf9cdb04b221f596e4.jpg' }, // Outfit Grid
-    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/originals/df/70/dd/df70ddba61185b085c871f43d07d779f.jpg' }, // Outfit Grid
-    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/originals/16/6a/26/166a26e12c60e08457b02278cbd2108e.jpg' }, // Outfit Grid
-    { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/736x/4f/98/86/4f9886cae933b901614d7249aab8b1c5.jpg' }, // Outfit Grid
-    { id: 'y2k', name: 'Y2K', image: 'https://i.pinimg.com/736x/6b/8b/5f/6b8b5fa84424338a0881298063c299b9.jpg' }, // Outfit Grid
-    { id: 'boho', name: 'Boho', image: 'https://i.pinimg.com/736x/de/6b/d5/de6bd5cdbd9d9955eb38a36c2b86fe05.jpg' }, // Outfit Grid
-    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/originals/82/4c/69/824c693d1806d231bb7f1a81bf6b71d9.jpg' }, // Outfit Grid
-    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/originals/c8/0c/76/c80c762e855a2f0926768fd4bb0f3702.jpg' }, // Outfit Grid
+const WOMENS_STYLES = [
+    { id: 'streetwear', name: 'Streetwear', image: 'https://i.pinimg.com/736x/2f/74/82/2f7482e50ce55cbf9cdb04b221f596e4.jpg' },
+    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/originals/df/70/dd/df70ddba61185b085c871f43d07d779f.jpg' },
+    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/originals/16/6a/26/166a26e12c60e08457b02278cbd2108e.jpg' },
+    { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/736x/4f/98/86/4f9886cae933b901614d7249aab8b1c5.jpg' },
+    { id: 'y2k', name: 'Y2K', image: 'https://i.pinimg.com/736x/6b/8b/5f/6b8b5fa84424338a0881298063c299b9.jpg' },
+    { id: 'boho', name: 'Boho', image: 'https://i.pinimg.com/736x/de/6b/d5/de6bd5cdbd9d9955eb38a36c2b86fe05.jpg' },
+    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/originals/82/4c/69/824c693d1806d231bb7f1a81bf6b71d9.jpg' },
+    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/originals/c8/0c/76/c80c762e855a2f0926768fd4bb0f3702.jpg' },
+];
+
+const MENS_STYLES = [
+    { id: 'streetwear', name: 'Streetwear', image: 'https://i.pinimg.com/736x/c5/4c/26/c54c264251d1871408b8b05615822396.jpg' }, // Updated Male image
+    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/564x/e7/7e/17/e77e17bc5618f34384ee49479b188c03.jpg' }, // Updated Male image
+    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/564x/0a/63/1f/0a631f49646f901a182928503b8e4347.jpg' }, // Updated Male image
+    { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/564x/2b/9c/68/2b9c687f87213892348575027877583f.jpg' }, // Updated Male image
+    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/564x/4e/d6/0f/4ed60f06587c631e873832c3f59633e2.jpg' }, // Updated Male image
+    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/564x/11/4d/93/114d9320e8201389369f109259586410.jpg' }, // Updated Male image
 ];
 
 interface StyleSwipeProps {
@@ -19,19 +28,15 @@ interface StyleSwipeProps {
 }
 
 export function StyleSwipe({ onComplete, gender }: StyleSwipeProps) {
-    // Filter styles based on gender
-    const visibleStyles = STYLES.filter(style => {
-        if (gender === 'Mens') {
-            return !['boho', 'y2k'].includes(style.id);
-        }
-        return true; // Show all for Womens or Unisex
-    });
+    // Select styles based on gender
+    // Default to Womens if not specified or Unisex (can be adjusted later)
+    const currentStyleList = gender === 'Mens' ? MENS_STYLES : WOMENS_STYLES;
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
     const [direction, setDirection] = useState<'left' | 'right' | null>(null);
 
-    const currentStyle = visibleStyles[currentIndex];
+    const currentStyle = currentStyleList[currentIndex];
 
     const handleVote = (liked: boolean) => {
         setDirection(liked ? 'right' : 'left');
@@ -42,7 +47,7 @@ export function StyleSwipe({ onComplete, gender }: StyleSwipeProps) {
                 setSelectedStyles(prev => [...prev, currentStyle.name]); // Save the readable name
             }
 
-            if (currentIndex < visibleStyles.length - 1) {
+            if (currentIndex < currentStyleList.length - 1) {
                 setCurrentIndex(prev => prev + 1);
                 setDirection(null);
             } else {
@@ -53,7 +58,7 @@ export function StyleSwipe({ onComplete, gender }: StyleSwipeProps) {
         }, 300);
     };
 
-    if (currentIndex >= visibleStyles.length) {
+    if (currentIndex >= currentStyleList.length) {
         return (
             <div className="flex flex-col items-center justify-center h-full p-8 text-center">
                 <div className="bg-green-100 p-4 rounded-full mb-4">
@@ -73,7 +78,7 @@ export function StyleSwipe({ onComplete, gender }: StyleSwipeProps) {
             <div className="w-full h-1 bg-gray-100 rounded-full mb-6 relative overflow-hidden">
                 <div
                     className="absolute h-full bg-black transition-all duration-300"
-                    style={{ width: `${((currentIndex) / visibleStyles.length) * 100}%` }}
+                    style={{ width: `${((currentIndex) / currentStyleList.length) * 100}%` }}
                 />
             </div>
 
