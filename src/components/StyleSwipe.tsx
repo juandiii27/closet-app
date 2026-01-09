@@ -3,23 +3,23 @@ import { motion, AnimatePresence } from 'framer-motion'; // Assuming framer-moti
 import { X, Heart, Check } from 'lucide-react';
 
 const WOMENS_STYLES = [
-    { id: 'streetwear', name: 'Streetwear', image: 'https://i.pinimg.com/736x/2f/74/82/2f7482e50ce55cbf9cdb04b221f596e4.jpg' },
-    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/736x/ec/d6/76/ecd676839d09c31405167f402c40049e.jpg' }, // Updated to 736x (was original)
-    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/736x/16/6a/26/166a26e12c60e08457b02278cbd2108e.jpg' }, // Updated to 736x
+    { id: 'streetwear', name: 'Streetwear-Fem', image: 'https://i.pinimg.com/736x/8d/96/37/8d963784157833535978137350cb409c.jpg' }, // Clearly Female
+    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/736x/ec/d6/76/ecd676839d09c31405167f402c40049e.jpg' },
+    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/736x/16/6a/26/166a26e12c60e08457b02278cbd2108e.jpg' },
     { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/736x/4f/98/86/4f9886cae933b901614d7249aab8b1c5.jpg' },
     { id: 'y2k', name: 'Y2K', image: 'https://i.pinimg.com/736x/6b/8b/5f/6b8b5fa84424338a0881298063c299b9.jpg' },
     { id: 'boho', name: 'Boho', image: 'https://i.pinimg.com/736x/de/6b/d5/de6bd5cdbd9d9955eb38a36c2b86fe05.jpg' },
-    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/736x/82/4c/69/824c693d1806d231bb7f1a81bf6b71d9.jpg' }, // Updated to 736x
-    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/736x/c8/0c/76/c80c762e855a2f0926768fd4bb0f3702.jpg' }, // Updated to 736x
+    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/736x/82/4c/69/824c693d1806d231bb7f1a81bf6b71d9.jpg' },
+    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/736x/c8/0c/76/c80c762e855a2f0926768fd4bb0f3702.jpg' },
 ];
 
 const MENS_STYLES = [
-    { id: 'streetwear', name: 'Streetwear', image: 'https://i.pinimg.com/736x/c5/4c/26/c54c264251d1871408b8b05615822396.jpg' }, // Updated Male image
-    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/564x/e7/7e/17/e77e17bc5618f34384ee49479b188c03.jpg' }, // Updated Male image
-    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/564x/0a/63/1f/0a631f49646f901a182928503b8e4347.jpg' }, // Updated Male image
-    { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/564x/2b/9c/68/2b9c687f87213892348575027877583f.jpg' }, // Updated Male image
-    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/564x/4e/d6/0f/4ed60f06587c631e873832c3f59633e2.jpg' }, // Updated Male image
-    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/564x/11/4d/93/114d9320e8201389369f109259586410.jpg' }, // Updated Male image
+    { id: 'streetwear', name: 'Streetwear', image: 'https://i.pinimg.com/736x/c5/4c/26/c54c264251d1871408b8b05615822396.jpg' },
+    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/736x/3b/22/86/3b22864cc8237936a28135836a0ce339.jpg' }, // New Male URL (example)
+    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/736x/1a/0b/40/1a0b401058296231bd4075196504620f.jpg' }, // New Male URL
+    { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/736x/2b/9c/68/2b9c687f87213892348575027877583f.jpg' },
+    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/736x/4e/d6/0f/4ed60f06587c631e873832c3f59633e2.jpg' },
+    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/736x/11/4d/93/114d9320e8201389369f109259586410.jpg' },
 ];
 
 interface StyleSwipeProps {
@@ -75,10 +75,6 @@ export function StyleSwipe({ onComplete, gender }: StyleSwipeProps) {
     return (
         <div className="flex flex-col items-center w-full max-w-sm mx-auto h-[700px]">
             {/* Progress Bar */}
-            {/* DEBUG: Temporary Gender Check */}
-            <div className="absolute top-0 right-0 p-2 bg-black/50 text-white text-[10px] z-50 rounded">
-                Gender: {gender || 'undefined'} | Styles: {currentStyleList.length}
-            </div>
             <div className="w-full h-1 bg-gray-100 rounded-full mb-6 relative overflow-hidden">
                 <div
                     className="absolute h-full bg-black transition-all duration-300"
