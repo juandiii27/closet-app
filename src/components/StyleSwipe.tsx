@@ -3,23 +3,23 @@ import { motion, AnimatePresence } from 'framer-motion'; // Assuming framer-moti
 import { X, Heart, Check } from 'lucide-react';
 
 const WOMENS_STYLES = [
-    { id: 'streetwear', name: 'Streetwear', image: 'https://i.pinimg.com/736x/8d/96/37/8d963784157833535978137350cb409c.jpg' }, // Verified Female
-    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/736x/ec/d6/76/ecd676839d09c31405167f402c40049e.jpg' }, // Restoring hoping referrer fix solves blank/access denied
-    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/736x/16/6a/26/166a26e12c60e08457b02278cbd2108e.jpg' },
-    { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/736x/4f/98/86/4f9886cae933b901614d7249aab8b1c5.jpg' },
-    { id: 'y2k', name: 'Y2K', image: 'https://i.pinimg.com/736x/6b/8b/5f/6b8b5fa84424338a0881298063c299b9.jpg' },
-    { id: 'boho', name: 'Boho', image: 'https://i.pinimg.com/736x/de/6b/d5/de6bd5cdbd9d9955eb38a36c2b86fe05.jpg' },
-    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/736x/82/4c/69/824c693d1806d231bb7f1a81bf6b71d9.jpg' },
-    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/736x/c8/0c/76/c80c762e855a2f0926768fd4bb0f3702.jpg' },
+    { id: 'streetwear', name: 'Streetwear', image: 'https://images.unsplash.com/photo-1509319117116-308fa831de27?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1520006403909-838d6b92c22e?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'old_money', name: 'Old Money', image: 'https://images.unsplash.com/photo-1589310243389-96a5483213a8?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'y2k', name: 'Y2K', image: 'https://images.unsplash.com/photo-1601924994987-69e2c8e6f75c?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'boho', name: 'Boho', image: 'https://images.unsplash.com/photo-1520591799316-6b30425429aa?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'casual', name: 'Casual', image: 'https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'formal', name: 'Formal', image: 'https://images.unsplash.com/photo-1515347619252-60a6bf4fffce?w=600&auto=format&fit=crop&q=60' }, // Flat lay
 ];
 
 const MENS_STYLES = [
-    { id: 'streetwear', name: 'Streetwear', image: 'https://i.pinimg.com/736x/c5/4c/26/c54c264251d1871408b8b05615822396.jpg' }, // Pinterest Original
-    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/564x/e7/7e/17/e77e17bc5618f34384ee49479b188c03.jpg' }, // Pinterest Original
-    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/564x/0a/63/1f/0a631f49646f901a182928503b8e4347.jpg' }, // Pinterest Original
-    { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/564x/2b/9c/68/2b9c687f87213892348575027877583f.jpg' }, // Pinterest Original
-    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/564x/4e/d6/0f/4ed60f06587c631e873832c3f59633e2.jpg' }, // Pinterest Original
-    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/564x/11/4d/93/114d9320e8201389369f109259586410.jpg' }, // Pinterest Original
+    { id: 'streetwear', name: 'Streetwear', image: 'https://images.unsplash.com/photo-1516257984-b1b4d8c92306?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1516826957135-700dedea698c?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'old_money', name: 'Old Money', image: 'https://images.unsplash.com/photo-1505022610485-0249ba5b3675?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'casual', name: 'Casual', image: 'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'formal', name: 'Formal', image: 'https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?w=600&auto=format&fit=crop&q=60' }, // Flat lay
 ];
 
 interface StyleSwipeProps {
@@ -103,7 +103,6 @@ export function StyleSwipe({ onComplete, gender }: StyleSwipeProps) {
                                 src={currentStyle.image}
                                 alt={currentStyle.name}
                                 className="w-full h-full object-cover"
-                                referrerPolicy="no-referrer"
                             />
 
                             {/* Text Overlay with Gradient */}
