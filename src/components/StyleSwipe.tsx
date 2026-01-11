@@ -3,23 +3,23 @@ import { motion, AnimatePresence } from 'framer-motion'; // Assuming framer-moti
 import { X, Heart, Check } from 'lucide-react';
 
 const WOMENS_STYLES = [
-    { id: 'streetwear', name: 'Streetwear-Fem', image: 'https://i.pinimg.com/736x/8d/96/37/8d963784157833535978137350cb409c.jpg' }, // Clearly Female
-    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/736x/ec/d6/76/ecd676839d09c31405167f402c40049e.jpg' },
-    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/736x/16/6a/26/166a26e12c60e08457b02278cbd2108e.jpg' },
-    { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/736x/4f/98/86/4f9886cae933b901614d7249aab8b1c5.jpg' },
-    { id: 'y2k', name: 'Y2K', image: 'https://i.pinimg.com/736x/6b/8b/5f/6b8b5fa84424338a0881298063c299b9.jpg' },
-    { id: 'boho', name: 'Boho', image: 'https://i.pinimg.com/736x/de/6b/d5/de6bd5cdbd9d9955eb38a36c2b86fe05.jpg' },
-    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/736x/82/4c/69/824c693d1806d231bb7f1a81bf6b71d9.jpg' },
-    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/736x/c8/0c/76/c80c762e855a2f0926768fd4bb0f3702.jpg' },
+    { id: 'streetwear', name: 'Streetwear', image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' },
+    { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' },
+    { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1550614000-4b9519e0031c?w=600&auto=format&fit=crop&q=60' },
+    { id: 'old_money', name: 'Old Money', image: 'https://images.unsplash.com/photo-1548532928-b34e3be62fc6?w=600&auto=format&fit=crop&q=60' },
+    { id: 'y2k', name: 'Y2K', image: 'https://images.unsplash.com/photo-1616486029423-aaa478965c97?w=600&auto=format&fit=crop&q=60' },
+    { id: 'boho', name: 'Boho', image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&auto=format&fit=crop&q=60' },
+    { id: 'casual', name: 'Casual', image: 'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=600&auto=format&fit=crop&q=60' },
+    { id: 'formal', name: 'Formal', image: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600&auto=format&fit=crop&q=60' },
 ];
 
 const MENS_STYLES = [
-    { id: 'streetwear', name: 'Streetwear', image: 'https://i.pinimg.com/736x/c5/4c/26/c54c264251d1871408b8b05615822396.jpg' },
-    { id: 'minimalist', name: 'Minimalist', image: 'https://i.pinimg.com/736x/3b/22/86/3b22864cc8237936a28135836a0ce339.jpg' }, // New Male URL (example)
-    { id: 'vintage', name: 'Vintage', image: 'https://i.pinimg.com/736x/1a/0b/40/1a0b401058296231bd4075196504620f.jpg' }, // New Male URL
-    { id: 'old_money', name: 'Old Money', image: 'https://i.pinimg.com/736x/2b/9c/68/2b9c687f87213892348575027877583f.jpg' },
-    { id: 'casual', name: 'Casual', image: 'https://i.pinimg.com/736x/4e/d6/0f/4ed60f06587c631e873832c3f59633e2.jpg' },
-    { id: 'formal', name: 'Formal', image: 'https://i.pinimg.com/736x/11/4d/93/114d9320e8201389369f109259586410.jpg' },
+    { id: 'streetwear', name: 'Streetwear', image: 'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=600&auto=format&fit=crop&q=60' }, // Male model
+    { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1516257984-b1b4d8c92306?w=600&auto=format&fit=crop&q=60' }, // Male
+    { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600&auto=format&fit=crop&q=60' }, // Male
+    { id: 'old_money', name: 'Old Money', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=60' }, // Male
+    { id: 'casual', name: 'Casual', image: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=600&auto=format&fit=crop&q=60' }, // Male
+    { id: 'formal', name: 'Formal', image: 'https://images.unsplash.com/photo-1593032465175-d81f0f53d35b?w=600&auto=format&fit=crop&q=60' }, // Male
 ];
 
 interface StyleSwipeProps {
