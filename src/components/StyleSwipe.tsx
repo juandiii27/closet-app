@@ -6,7 +6,7 @@ const WOMENS_STYLES = [
     { id: 'streetwear', name: 'Streetwear', image: 'https://images.unsplash.com/photo-1509319117116-308fa831de27?w=600&auto=format&fit=crop&q=60' }, // Flat lay
     { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=60' }, // Flat lay
     { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1520006403909-838d6b92c22e?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'old_money', name: 'Old Money', image: 'https://images.unsplash.com/photo-1589310243389-96a5483213a8?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'old_money', name: 'Old Money', image: 'https://www.pinterest.com/pin/2814818511309010/' }, // Flat lay
     { id: 'y2k', name: 'Y2K', image: 'https://images.unsplash.com/photo-1601924994987-69e2c8e6f75c?w=600&auto=format&fit=crop&q=60' }, // Flat lay
     { id: 'boho', name: 'Boho', image: 'https://images.unsplash.com/photo-1520591799316-6b30425429aa?w=600&auto=format&fit=crop&q=60' }, // Flat lay
     { id: 'casual', name: 'Casual', image: 'https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=600&auto=format&fit=crop&q=60' }, // Flat lay
