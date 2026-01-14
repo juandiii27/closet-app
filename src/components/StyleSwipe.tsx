@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'; // Assuming framer-moti
 import { X, Heart, Check } from 'lucide-react';
 
 const WOMENS_STYLES = [
-    { id: 'streetwear', name: 'Streetwear', image: 'https://images.unsplash.com/photo-1509319117116-308fa831de27?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'streetwear', name: 'Streetwear', image: 'https://drive.google.com/file/d/1LnVDSr6yorPAx7PJWXDI96K0E4e4RZ5R/view?usp=share_link' }, // Flat lay
     { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=60' }, // Flat lay
     { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1520006403909-838d6b92c22e?w=600&auto=format&fit=crop&q=60' }, // Flat lay
     { id: 'old_money', name: 'Old Money', image: 'https://www.pinterest.com/pin/2814818511309010/' }, // Flat lay
