@@ -18,7 +18,7 @@ const MENS_STYLES = [
     { id: 'minimalist', name: 'Minimalist', image: 'https://image2url.com/r2/default/images/1769098328807-636f05cf-d798-4948-948a-a91db2423e38.jpeg' }, // Flat lay
     { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=600&auto=format&fit=crop&q=60' }, // Flat lay
     { id: 'old_money', name: 'Old Money', image: 'https://image2url.com/r2/default/images/1769096193589-462e6cb7-068e-4506-8418-a9f91fd81f0a.jpeg' }, // Flat lay
-    { id: 'casual', name: 'Casual', image: 'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'casual', name: 'Casual', image: 'https://image2url.com/r2/default/images/1769098693149-7502ec08-47dc-4996-ae87-8640dfc3b717.jpeg' }, // Flat lay
     { id: 'formal', name: 'Formal', image: 'https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?w=600&auto=format&fit=crop&q=60' }, // Flat lay
 ];
 
