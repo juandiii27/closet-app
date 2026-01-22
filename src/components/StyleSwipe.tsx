@@ -19,7 +19,7 @@ const MENS_STYLES = [
     { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=600&auto=format&fit=crop&q=60' }, // Flat lay
     { id: 'old_money', name: 'Old Money', image: 'https://image2url.com/r2/default/images/1769096193589-462e6cb7-068e-4506-8418-a9f91fd81f0a.jpeg' }, // Flat lay
     { id: 'casual', name: 'Casual', image: 'https://image2url.com/r2/default/images/1769098693149-7502ec08-47dc-4996-ae87-8640dfc3b717.jpeg' }, // Flat lay
-    { id: 'formal', name: 'Formal', image: 'https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'formal', name: 'Formal', image: 'https://image2url.com/r2/default/images/1769099098376-63e8bd25-a327-4116-8c76-1514be412526.jpeg' }, // Flat lay
 ];
 
 interface StyleSwipeProps {
