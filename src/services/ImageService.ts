@@ -1,4 +1,4 @@
-const REMOVE_BG_API_KEY = import.meta.env.VITE_REMOVE_BG_API_KEY;
+const REMOVE_BG_API_KEY = import.meta.env.VITE_REMOVE_BG_API;
 
 export const ImageService = {
   async removeBackground(file: File): Promise<Blob> {
