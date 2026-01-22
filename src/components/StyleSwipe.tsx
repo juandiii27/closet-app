@@ -16,7 +16,7 @@ const WOMENS_STYLES = [
 const MENS_STYLES = [
     { id: 'streetwear', name: 'Streetwear', image: 'https://image2url.com/r2/default/images/1769097843990-ccd2649c-8022-443a-b451-05d279c243ee.jpeg' }, // Flat lay
     { id: 'minimalist', name: 'Minimalist', image: 'https://image2url.com/r2/default/images/1769098328807-636f05cf-d798-4948-948a-a91db2423e38.jpeg' }, // Flat lay
-    { id: 'sportwear', name: 'Sportwear', image: 'https://image2url.com/r2/default/images/1769098328807-636f05cf-d798-4948-948a-a91db2423e38.jpeg' }, // Flat lay
+    { id: 'sportwear', name: 'Sportwear', image: 'https://image2url.com/r2/default/images/1769102412693-e423c6b7-10b6-4b1f-8a6c-c83b9c3374dc.jpeg' }, // Flat lay
     { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=600&auto=format&fit=crop&q=60' }, // Flat lay
     { id: 'old_money', name: 'Old Money', image: 'https://image2url.com/r2/default/images/1769096193589-462e6cb7-068e-4506-8418-a9f91fd81f0a.jpeg' }, // Flat lay
     { id: 'casual', name: 'Casual', image: 'https://image2url.com/r2/default/images/1769098693149-7502ec08-47dc-4996-ae87-8640dfc3b717.jpeg' }, // Flat lay
