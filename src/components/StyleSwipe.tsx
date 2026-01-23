@@ -5,7 +5,7 @@ import { X, Heart, Check } from 'lucide-react';
 const WOMENS_STYLES = [
     { id: 'streetwear', name: 'Streetwear', image: 'https://images.unsplash.com/photo-1550614000-4b9519e0031c?w=600&auto=format&fit=crop&q=60' }, // Verified Flat Lay
     { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1509319117116-308fa831de27?w=600&auto=format&fit=crop&q=60' }, // Flat Lay
-    { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=60' }, // Flat Lay
+    { id: 'layering', name: 'Layering', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=60' }, // Flat Lay
     { id: 'old_money', name: 'Old Money', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&auto=format&fit=crop&q=60' }, // Flat Lay (Blue heels/jeans)
     { id: 'y2k', name: 'Y2K', image: 'https://images.unsplash.com/photo-1601924994987-69e2c8e6f75c?w=600&auto=format&fit=crop&q=60' }, // Flat Lay
     { id: 'boho', name: 'Boho', image: 'https://images.unsplash.com/photo-1520591799316-6b30425429aa?w=600&auto=format&fit=crop&q=60' },
