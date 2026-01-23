@@ -3,23 +3,24 @@ import { motion, AnimatePresence } from 'framer-motion'; // Assuming framer-moti
 import { X, Heart, Check } from 'lucide-react';
 
 const WOMENS_STYLES = [
-    { id: 'streetwear', name: 'Streetwear', image: 'https://images.unsplash.com/photo-1509319117116-308fa831de27?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1520006403909-838d6b92c22e?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'old_money', name: 'Old Money', image: 'https://images.unsplash.com/photo-1589310243389-96a5483213a8?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'y2k', name: 'Y2K', image: 'https://images.unsplash.com/photo-1601924994987-69e2c8e6f75c?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'boho', name: 'Boho', image: 'https://images.unsplash.com/photo-1520591799316-6b30425429aa?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'casual', name: 'Casual', image: 'https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'formal', name: 'Formal', image: 'https://images.unsplash.com/photo-1515347619252-60a6bf4fffce?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'streetwear', name: 'Streetwear', image: 'https://images.unsplash.com/photo-1550614000-4b9519e0031c?w=600&auto=format&fit=crop&q=60' }, // Verified Flat Lay
+    { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1509319117116-308fa831de27?w=600&auto=format&fit=crop&q=60' }, // Flat Lay
+    { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=60' }, // Flat Lay
+    { id: 'old_money', name: 'Old Money', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&auto=format&fit=crop&q=60' }, // Flat Lay (Blue heels/jeans)
+    { id: 'y2k', name: 'Y2K', image: 'https://images.unsplash.com/photo-1601924994987-69e2c8e6f75c?w=600&auto=format&fit=crop&q=60' }, // Flat Lay
+    { id: 'boho', name: 'Boho', image: 'https://images.unsplash.com/photo-1520591799316-6b30425429aa?w=600&auto=format&fit=crop&q=60' },
+    { id: 'casual', name: 'Casual', image: 'https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=600&auto=format&fit=crop&q=60' },
+    { id: 'formal', name: 'Formal', image: 'https://images.unsplash.com/photo-1515347619252-60a6bf4fffce?w=600&auto=format&fit=crop&q=60' },
 ];
 
 const MENS_STYLES = [
-    { id: 'streetwear', name: 'Streetwear', image: 'https://images.unsplash.com/photo-1516257984-b1b4d8c92306?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1516826957135-700dedea698c?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'old_money', name: 'Old Money', image: 'https://images.unsplash.com/photo-1505022610485-0249ba5b3675?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'casual', name: 'Casual', image: 'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=600&auto=format&fit=crop&q=60' }, // Flat lay
-    { id: 'formal', name: 'Formal', image: 'https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?w=600&auto=format&fit=crop&q=60' }, // Flat lay
+    { id: 'streetwear', name: 'Streetwear', image: '/images/styles/streetwear_men.png' }, // User Provided Image
+    { id: 'minimalist', name: 'Minimalist', image: '/images/styles/minimalist_men.png' }, // User Provided Image
+    { id: 'vintage', name: 'Vintage', image: '/images/styles/vintage_men.png' }, // User Provided Image
+    { id: 'old_money', name: 'Old Money', image: '/images/styles/old_money_men.png' }, // User Provided Image
+    { id: 'casual', name: 'Casual', image: '/images/styles/casual_men.png' }, // User Provided Image
+    { id: 'formal', name: 'Formal', image: '/images/styles/formal_men.png' }, // User Provided Image
+    { id: 'sportswear', name: 'Sportswear', image: '/images/styles/sportswear_men.png' }, // User Provided Image
 ];
 
 interface StyleSwipeProps {
