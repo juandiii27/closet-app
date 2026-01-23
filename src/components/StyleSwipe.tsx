@@ -14,7 +14,7 @@ const WOMENS_STYLES = [
 ];
 
 const MENS_STYLES = [
-    { id: 'streetwear', name: 'Streetwear', image: '/images/styles/streetwear_men.png' }, // User Provided Image
+    { id: 'streetwear', name: 'Streetwear', image: 'https://image2url.com/r2/default/images/1769177373279-266ac11d-4227-4540-9aba-abdf546f9407.jpeg' }, // User Provided Image
     { id: 'minimalist', name: 'Minimalist', image: '/images/styles/minimalist_men.png' }, // User Provided Image
     { id: 'vintage', name: 'Vintage', image: '/images/styles/vintage_men.png' }, // User Provided Image
     { id: 'old_money', name: 'Old Money', image: '/images/styles/old_money_men.png' }, // User Provided Image
