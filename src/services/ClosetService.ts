@@ -48,13 +48,21 @@ export const ClosetService = {
             return newItem;
         }
 
+        // Debug logging
+        const { data: { user } } = await supabase.auth.getUser();
+        console.log("DEBUG: Supabase Auth ID:", user?.id);
+        console.log("DEBUG: Item Payload User ID:", item.user_id);
+
         const { data, error } = await supabase
             .from('items')
             .insert([item]) // Supabase generates ID
             .select()
             .single();
 
-        if (error) throw error;
+        if (error) {
+            console.error("DEBUG: Insert Error Details:", error);
+            throw error;
+        }
         return data;
     },
 

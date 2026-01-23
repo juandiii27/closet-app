@@ -20,14 +20,14 @@ export const StorageService = {
 
         const fileName = `${userId}/${Date.now()}-${file.name}`;
         const { data, error } = await supabase.storage
-            .from('closet-items')
+            .from('closet-item')
             .upload(fileName, file);
 
         if (error) throw error;
 
         // Get public URL
         const { data: { publicUrl } } = supabase.storage
-            .from('closet-items')
+            .from('closet-item')
             .getPublicUrl(data.path);
 
         return publicUrl;

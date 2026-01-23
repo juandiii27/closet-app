@@ -92,8 +92,8 @@ export default function Upload() {
 
             navigate('/');
         } catch (error) {
-            console.error("Upload failed", error);
-            alert("Failed to save item. Please try again.");
+            console.error("Upload failed details:", error);
+            alert(`Failed to save item: ${(error as any).message || 'Unknown error'}`);
         } finally {
             setIsSaving(false);
         }
