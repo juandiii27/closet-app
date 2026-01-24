@@ -255,9 +255,9 @@ export default function Outfits() {
                 </Button>
             </header>
 
-            <div className="flex-1 relative flex items-center justify-center px-4 w-full h-full">
-                {/* Centered Deck Wrapper */}
-                <div className="relative w-full max-w-sm aspect-[3/4]">
+            <div className="flex-1 relative flex items-center justify-center px-4 w-full h-full mb-32">
+                {/* Centered Deck Wrapper - Explicit Height to prevent collapse */}
+                <div className="relative w-full max-w-md h-[68vh]">
                     <AnimatePresence>
                         <motion.div
                             key={currentCard.id}
@@ -271,17 +271,22 @@ export default function Outfits() {
                             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
                             className="w-full h-full rounded-3xl shadow-xl overflow-hidden cursor-grab active:cursor-grabbing border border-gray-100 z-10 bg-white absolute inset-0"
                         >
-                            <div id="outfit-collage-container" className="relative h-full w-full">
-                                {/* Render the collage instead of a single image */}
-                                <OutfitCollage
-                                    items={currentCard.items}
-                                    onItemClick={setSwappingItem}
-                                />
+                            <div id="outfit-collage-container" className="relative h-full w-full flex flex-col bg-white overflow-hidden rounded-3xl">
+                                {/* FULL HEIGHT COLLAGE (Background Layer) */}
+                                <div className="absolute inset-0 w-full h-full z-0">
+                                    <OutfitCollage
+                                        items={currentCard.items}
+                                        onItemClick={setSwappingItem}
+                                    />
+                                </div>
 
-                                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-6 text-white pt-20 pointer-events-none">
-                                    <h2 className="text-xl font-bold mb-1 shadow-black/50 drop-shadow-sm">{currentCard.title}</h2>
-                                    <p className="text-sm font-medium text-green-300 drop-shadow-sm mb-1">{currentCard.styleTag}</p>
-                                    <p className="text-xs opacity-80 mt-1">Tap an item to swap</p>
+                                {/* Text Overlay (Bottom Layer) */}
+                                <div className="absolute bottom-0 left-0 w-full z-10 pt-24 pb-6 px-6 bg-gradient-to-t from-[#d4d4d8] via-[#d4d4d8]/90 to-transparent pointer-events-none">
+                                    <div className="flex flex-col justify-end text-left">
+                                        <h2 className="text-3xl font-bold text-gray-900 mb-1 font-serif leading-tight drop-shadow-sm">{currentCard.title}</h2>
+                                        <p className="text-sm font-bold text-gray-800 uppercase tracking-wide mb-1 opacity-90">{currentCard.styleTag}</p>
+                                        <p className="text-xs text-gray-600 font-medium">Tap an item to swap</p>
+                                    </div>
                                 </div>
                             </div>
 
