@@ -27,6 +27,7 @@ export default function Upload() {
 
     // State for the raw file object
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [processedFile, setProcessedFile] = useState<File | null>(null);
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -67,6 +68,10 @@ export default function Upload() {
                 setStep('result');
             };
             reader.readAsDataURL(processedBlob);
+
+            // Create a new File object from the blob to upload later
+            const refinedFile = new File([processedBlob], selectedFile.name, { type: 'image/png' });
+            setProcessedFile(refinedFile);
         } catch (error) {
             console.error("Background removal failed", error);
             alert("Could not remove background. Using original image.");
@@ -80,8 +85,9 @@ export default function Upload() {
         setIsSaving(true);
 
         try {
-            // 1. Upload to Storage
-            const imageUrl = await StorageService.uploadImage(user.id, selectedFile);
+            // 1. Upload to Storage (Use processed file if available!)
+            const fileToUpload = processedFile || selectedFile;
+            const imageUrl = await StorageService.uploadImage(user.id, fileToUpload);
 
             // 2. Add to Database
             await addItem({
@@ -102,6 +108,7 @@ export default function Upload() {
     const reset = () => {
         setSelectedImage(null);
         setSelectedFile(null); // Also reset the file object
+        setProcessedFile(null);
         setStep('select');
     };
 
