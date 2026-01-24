@@ -5,7 +5,7 @@ import { X, Heart, Check } from 'lucide-react';
 const WOMENS_STYLES = [
     { id: 'streetwear', name: 'Streetwear', image: 'https://images.unsplash.com/photo-1550614000-4b9519e0031c?w=600&auto=format&fit=crop&q=60' }, // Verified Flat Lay
     { id: 'minimalist', name: 'Minimalist', image: 'https://images.unsplash.com/photo-1509319117116-308fa831de27?w=600&auto=format&fit=crop&q=60' }, // Flat Lay
-    { id: 'vintage', name: 'Vintage', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=60' }, // Flat Lay
+    { id: 'layering', name: 'Layering', image: 'https://image2url.com/r2/default/images/1769177491716-81669226-fe5b-4c3b-ae9e-3b4b52040169.jpeg' }, // Flat Lay
     { id: 'old_money', name: 'Old Money', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&auto=format&fit=crop&q=60' }, // Flat Lay (Blue heels/jeans)
     { id: 'y2k', name: 'Y2K', image: 'https://images.unsplash.com/photo-1601924994987-69e2c8e6f75c?w=600&auto=format&fit=crop&q=60' }, // Flat Lay
     { id: 'boho', name: 'Boho', image: 'https://images.unsplash.com/photo-1520591799316-6b30425429aa?w=600&auto=format&fit=crop&q=60' },
@@ -14,10 +14,10 @@ const WOMENS_STYLES = [
 ];
 
 const MENS_STYLES = [
-    { id: 'streetwear', name: 'Streetwear', image: '/images/styles/streetwear_men.png' }, // User Provided Image
+    { id: 'streetwear', name: 'Streetwear', image: 'https://image2url.com/r2/default/images/1769177373279-266ac11d-4227-4540-9aba-abdf546f9407.jpeg' }, // User Provided Image
     { id: 'minimalist', name: 'Minimalist', image: '/images/styles/minimalist_men.png' }, // User Provided Image
-    { id: 'vintage', name: 'Vintage', image: '/images/styles/vintage_men.png' }, // User Provided Image
-    { id: 'old_money', name: 'Old Money', image: '/images/styles/old_money_men.png' }, // User Provided Image
+    { id: 'layering', name: 'Layering', image: 'https://image2url.com/r2/default/images/1769177491716-81669226-fe5b-4c3b-ae9e-3b4b52040169.jpeg' }, // User Provided Image
+    { id: 'old_money', name: 'Old Money', image: 'https://image2url.com/r2/default/images/1769177775298-7e1c1ec5-0cfc-4981-8990-aa11b3214e56.jpeg' }, // User Provided Image
     { id: 'casual', name: 'Casual', image: '/images/styles/casual_men.png' }, // User Provided Image
     { id: 'formal', name: 'Formal', image: '/images/styles/formal_men.png' }, // User Provided Image
     { id: 'sportswear', name: 'Sportswear', image: '/images/styles/sportswear_men.png' }, // User Provided Image
