@@ -10,9 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@imgly/background-removal": "^1.7.0",
+    "@imgly/background-removal-data": "^1.4.5",
     "@supabase/supabase-js": "^2.89.0",
     "@vis.gl/react-google-maps": "^1.7.1",
     "clsx": "^2.1.1",
+    "coi-serviceworker": "^0.1.7",
     "framer-motion": "^12.23.26",
     "html-to-image": "^1.11.13",
     "lucide-react": "^0.562.0",

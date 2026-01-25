@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '../components/ui/Button';
-import { Sparkles, X, Heart, RefreshCw, Share2, Calendar, Trash2 } from 'lucide-react';
+import { Sparkles, X, Heart, RefreshCw, Share2, Calendar, Trash2, MapPin } from 'lucide-react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { useCloset } from '../hooks/useCloset';
 import { StylistService, type Outfit, type PlannedOutfit } from '../services/StylistService';
@@ -65,15 +65,7 @@ export default function Outfits() {
         }
     }, [outfits]);
 
-    // Backwards compatibility for the swipe logic
-    const currentCard = activeCards[0] ? {
-        id: activeCards[0].id,
-        items: activeCards[0].items, // Pass the full item objects
-        title: activeCards[0].title || 'Mix & Match',
-        styleTag: activeCards[0].styleTag
-    } : null;
-
-
+    const currentCard = activeCards[0] ? activeCards[0] : null;
 
     const handleSwipe = () => {
         setTimeout(() => {
@@ -243,7 +235,7 @@ export default function Outfits() {
 
     return (
         <div className="h-full flex flex-col p-4 pt-8 bg-gray-50/50">
-            <header className="mb-6 flex items-center justify-between">
+            <header className="mb-4 flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                         For {occasion} <Sparkles className="w-4 h-4 text-black" />
@@ -254,6 +246,18 @@ export default function Outfits() {
                     Change
                 </Button>
             </header>
+
+            {/* Warning Banner for Fallback Outfits */}
+            {currentCard.missingCategoryWarning && (
+                <div className="mb-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
+                    <span className="text-amber-600 text-lg">⚠️</span>
+                    <p className="text-xs text-amber-800 font-medium leading-tight pt-1">
+                        {currentCard.missingCategoryWarning}
+                        <br />
+                        <span className="opacity-75 font-normal">Try uploading more items (e.g. {occasion === 'Dinner' ? 'chinos, shirts' : 'items'}) for better matches.</span>
+                    </p>
+                </div>
+            )}
 
             <div className="flex-1 relative flex items-center justify-center px-4 w-full h-full mb-32">
                 {/* Centered Deck Wrapper - Explicit Height to prevent collapse */}
