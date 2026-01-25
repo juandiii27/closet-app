@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { Button } from '../components/ui/Button';
-import { Camera, Image as ImageIcon, Loader2, Check, ArrowRight, Wand2 } from 'lucide-react';
+import { Camera, Image as ImageIcon, Loader2, Check, ArrowRight, Wand2, Eraser } from 'lucide-react';
+import { ImageEraser } from '../components/ImageEraser';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCloset } from '../hooks/useCloset';
@@ -17,7 +18,7 @@ export default function Upload() {
     const { user, profile } = useAuth(); // Get profile
     const navigate = useNavigate();
 
-    const [step, setStep] = useState<'select' | 'preview' | 'processing' | 'result'>('select');
+    const [step, setStep] = useState<'select' | 'preview' | 'processing' | 'result' | 'adjust'>('select');
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<Category>('Tops');
     // Gender is now derived from profile
@@ -206,6 +207,13 @@ export default function Upload() {
                             <div className="absolute top-4 right-4 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium flex items-center">
                                 <Check className="w-3 h-3 mr-1" /> Studio Ready
                             </div>
+
+                            {/* Edit Button overlay */}
+                            <div className="absolute bottom-4 right-4">
+                                <Button size="sm" variant="outline" onClick={() => setStep('adjust')} className="bg-white/80 backdrop-blur-sm hover:bg-white text-xs h-8">
+                                    <Eraser className="w-3 h-3 mr-1.5" /> Edit / Erase
+                                </Button>
+                            </div>
                         </div>
 
                         <div className="flex flex-col gap-3">
@@ -233,6 +241,31 @@ export default function Upload() {
                     </motion.div>
                 )}
 
+                {step === 'adjust' && selectedImage && (
+                    <motion.div
+                        key="adjust"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex-1 flex flex-col h-full"
+                    >
+                        <ImageEraser
+                            imageSrc={selectedImage}
+                            onCancel={() => setStep('result')}
+                            onSave={(blob) => {
+                                const newFile = new File([blob], processedFile?.name || 'edited_image.png', { type: 'image/png' });
+                                setProcessedFile(newFile);
+
+                                // Update preview
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                    setSelectedImage(reader.result as string);
+                                    setStep('result');
+                                };
+                                reader.readAsDataURL(blob);
+                            }}
+                        />
+                    </motion.div>
+                )}
             </AnimatePresence>
         </div>
     );
