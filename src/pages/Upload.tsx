@@ -20,6 +20,7 @@ export default function Upload() {
 
     const [step, setStep] = useState<'select' | 'preview' | 'processing' | 'result' | 'adjust'>('select');
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [originalImage, setOriginalImage] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<Category>('Tops');
     // Gender is now derived from profile
     const [isSaving, setIsSaving] = useState(false);
@@ -38,7 +39,9 @@ export default function Upload() {
             // Keep preview logic for UI
             const reader = new FileReader();
             reader.onloadend = () => {
-                setSelectedImage(reader.result as string);
+                const result = reader.result as string;
+                setSelectedImage(result);
+                setOriginalImage(result); // Store original
                 setStep('preview');
             };
             reader.readAsDataURL(file);
@@ -108,6 +111,7 @@ export default function Upload() {
 
     const reset = () => {
         setSelectedImage(null);
+        setOriginalImage(null);
         setSelectedFile(null); // Also reset the file object
         setProcessedFile(null);
         setStep('select');
@@ -250,6 +254,7 @@ export default function Upload() {
                     >
                         <ImageEraser
                             imageSrc={selectedImage}
+                            originalSrc={originalImage || selectedImage}
                             onCancel={() => setStep('result')}
                             onSave={(blob) => {
                                 const newFile = new File([blob], processedFile?.name || 'edited_image.png', { type: 'image/png' });
