@@ -1,5 +1,5 @@
 import type { ClosetItem } from './ClosetService';
-import { StyleMemory } from './StyleMemory';
+
 
 /**
  * A Moodboard represents a specific visual aesthetic within a broad style.

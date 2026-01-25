@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '../components/ui/Button';
-import { Sparkles, X, Heart, RefreshCw, Share2, Calendar, Trash2, MapPin } from 'lucide-react';
+import { Sparkles, X, Heart, RefreshCw, Share2, Calendar, Trash2 } from 'lucide-react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { useCloset } from '../hooks/useCloset';
 import { StylistService, type Outfit, type PlannedOutfit } from '../services/StylistService';
