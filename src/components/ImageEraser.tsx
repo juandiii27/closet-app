@@ -1,8 +1,6 @@
 
 
 import React, { useRef, useEffect, useState } from 'react';
-import { Button } from './ui/Button';
-import { Undo, Check, X } from 'lucide-react';
 import { SchematicOverlay, type SchematicShape, type SchematicType } from './SchematicOverlay';
 
 interface ImageEraserProps {
@@ -12,14 +10,13 @@ interface ImageEraserProps {
     onCancel: () => void;
 }
 
-export const ImageEraser: React.FC<ImageEraserProps> = ({ imageSrc, originalSrc, onSave, onCancel }) => {
+export const ImageEraser: React.FC<ImageEraserProps> = ({ imageSrc, originalSrc, onSave }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const maskCanvasRef = useRef<HTMLCanvasElement | null>(null);
     const overlayRef = useRef<HTMLCanvasElement>(null);
     const originalImgRef = useRef<HTMLImageElement | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const [history, setHistory] = useState<ImageData[]>([]);
     const [maskHistory, setMaskHistory] = useState<ImageData[]>([]);
     const [zoom, setZoom] = useState(1);
     const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -28,8 +25,6 @@ export const ImageEraser: React.FC<ImageEraserProps> = ({ imageSrc, originalSrc,
 
     // Schematic State
     const [schematic, setSchematic] = useState<SchematicShape | null>(null);
-
-    const [isRestoreReady, setIsRestoreReady] = useState(false);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -64,13 +59,7 @@ export const ImageEraser: React.FC<ImageEraserProps> = ({ imageSrc, originalSrc,
             origImg.src = originalSrc;
             origImg.onload = () => {
                 originalImgRef.current = origImg;
-                setIsRestoreReady(true);
             };
-            origImg.onerror = () => {
-                setIsRestoreReady(false);
-            };
-        } else {
-            setIsRestoreReady(false);
         }
     }, [imageSrc, originalSrc]);
 
@@ -80,13 +69,7 @@ export const ImageEraser: React.FC<ImageEraserProps> = ({ imageSrc, originalSrc,
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        // Save Image History
         const limit = 10;
-        const currentImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        setHistory(prev => {
-            const newHist = [...prev, currentImg];
-            return newHist.length > limit ? newHist.slice(1) : newHist;
-        });
 
         // Save Mask History
         if (maskCanvasRef.current) {
@@ -99,33 +82,6 @@ export const ImageEraser: React.FC<ImageEraserProps> = ({ imageSrc, originalSrc,
                 });
             }
         }
-    };
-
-    const handleUndo = () => {
-        if (history.length <= 1) return;
-        const canvas = canvasRef.current;
-        const maskCanvas = maskCanvasRef.current;
-        if (!canvas || !maskCanvas) return;
-
-        const ctx = canvas.getContext('2d');
-        const maskCtx = maskCanvas.getContext('2d');
-        if (!ctx || !maskCtx) return;
-
-        const newHistory = [...history];
-        newHistory.pop();
-        const previousState = newHistory[newHistory.length - 1];
-        ctx.putImageData(previousState, 0, 0);
-        setHistory(newHistory);
-
-        if (maskHistory.length > 1) {
-            const newMaskHistory = [...maskHistory];
-            newMaskHistory.pop();
-            const previousMask = newMaskHistory[newMaskHistory.length - 1];
-            maskCtx.putImageData(previousMask, 0, 0);
-            setMaskHistory(newMaskHistory);
-        }
-
-        redrawOverlay();
     };
 
     const redrawOverlay = () => {
@@ -414,7 +370,6 @@ export const ImageEraser: React.FC<ImageEraserProps> = ({ imageSrc, originalSrc,
                             containerHeight={canvasRef.current.clientHeight}
                             onChange={setSchematic}
                             onApply={applySchematic}
-                            onCrop={applySchematicCrop}
                             onSave={handleSchematicSave}
                             zoom={zoom}
                             onCancel={() => setSchematic(null)}

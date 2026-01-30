@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Shield, Scissors, Check } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { X, Shield, Check } from 'lucide-react';
 
 
 export type SchematicType = 'pants' | 'shirt' | 'box';
@@ -21,7 +21,6 @@ interface SchematicOverlayProps {
     containerHeight: number;
     onChange: (shape: SchematicShape) => void;
     onApply: () => void;
-    onCrop: () => void;
     onSave: () => void;
     onCancel: () => void;
     zoom: number;
@@ -33,7 +32,6 @@ export const SchematicOverlay: React.FC<SchematicOverlayProps> = ({
     containerHeight,
     onChange,
     onApply,
-    onCrop,
     onSave,
     onCancel,
     zoom
