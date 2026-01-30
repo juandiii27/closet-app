@@ -55,39 +55,56 @@ export const StylistService = {
                     return compatible && visualScore > 0;
                 });
 
-                const generated = generateFromPool(boardCandidates, board.name, board.description);
-                outfits.push(...generated);
+                const generated = generateFromPool(boardCandidates, board.name, board.description, occasion);
+
+                // CRITICAL: Tier 1 (Moodboards) should only show COMPLETE fits.
+                // If the board doesn't have enough pieces to make a full Top + Bottom look, skip it.
+                // This prevents "Sneaker only" Stealth Tech outfits.
+                const completeFits = generated.filter(g => g.items.some(i => i.category === 'Tops') && g.items.some(i => i.category === 'Bottoms'));
+
+                outfits.push(...completeFits);
             }
 
             // --- TIER 2: LOGIC ONLY (The "Safe" Zone) ---
-            // If Tier 1 didn't fill the deck (e.g. strict visuals failed), use just the StyleMemory logic
-            // This catches User Uploads that might have failed strict color checks but are technically allowed
+            // If Tier 1 didn't fill the deck (e.g. strict visuals failed), use just the StyleMemory logic.
+            // Tier 2 should ALSO focus on COMPLETE outfits to provide quality over partials.
             if (outfits.length < 5) {
-                console.log('Tier 2: Fallback to StyleMemory Logic');
+                console.log('Tier 2: Fallback to StyleMemory Logic (Complete Fit Priority)');
                 const logicCandidates = items.filter(item => StyleMemory.isCompatible(item, occasion));
 
-                const generated = generateFromPool(logicCandidates, `${occasion} Essential`, `${styleTheme}`);
+                const generated = generateFromPool(logicCandidates, `${occasion} Essential`, `${styleTheme}`, occasion);
+
+                // Only take complete fits from Tier 2 to prioritize quality.
+                const completeFits = generated.filter(g => g.items.some(i => i.category === 'Tops') && g.items.some(i => i.category === 'Bottoms'));
 
                 // Filter out duplicates
-                for (const fit of generated) {
+                for (const fit of completeFits) {
                     const id = fit.items.map(k => k.id).sort().join('-');
-                    // @ts-ignore
-                    if (!outfits.some(o => o.items.map(k => k.id).sort().join('-') === id)) {
+                    if (!outfits.some(o => o.items.map(m => m.id).sort().join('-') === id)) {
                         outfits.push(fit);
                     }
                 }
             }
 
-            // --- TIER 3: EMERGENCY FALLBACK (Anything Goes) ---
-            // If literally nothing matched (e.g. user has only 1 item or total mismatches), just return SOMETHING.
+            // --- TIER 3: EMERGENCY FALLBACK / PARTIALS (Graceful Degradation) ---
+            // This is the ONLY place where partial outfits are allowed, and only if we still have nothing.
             if (outfits.length === 0) {
-                console.log('Tier 3: Emergency Fallback');
-                const generated = generateFromPool(items, 'Mixed Style', 'Experimental fallback');
+                console.log('Tier 3: Graceful Degradation (Allowing Partials)');
 
-                // Tag these as Fallbacks so the UI can warn the user
+                // Disable fallback for Formal if NO items match at all (preventing sheer randomness)
+                const filteredPool = items.filter(item => StyleMemory.isCompatible(item, occasion));
+
+                if (filteredPool.length === 0 && ['Dinner', 'Date', 'Work'].includes(occasion)) {
+                    console.log(`No compatible items at all for formal occasion: ${occasion}`);
+                    return [];
+                }
+
+                // Generate from compatible pool, letting generateFromPool handle partials.
+                const generated = generateFromPool(filteredPool, `${occasion} Essential`, 'Partial fallback', occasion);
+
                 generated.forEach(g => {
                     g.isFallback = true;
-                    g.missingCategoryWarning = `We couldn't find items matching "${occasion}" rules. Showing mixed options instead.`;
+                    // Note: generateFromPool already sets the specific missingCategoryWarning
                 });
 
                 outfits.push(...generated);
@@ -124,13 +141,15 @@ export const StylistService = {
 };
 
 // Helper to assemble outfits from a specific filtered pool
-function generateFromPool(pool: ClosetItem[], title: string, styleTag: string): Outfit[] {
+function generateFromPool(pool: ClosetItem[], title: string, styleTag: string, occasion: string): Outfit[] {
     const tops = pool.filter(i => i.category === 'Tops');
     const bottoms = pool.filter(i => i.category === 'Bottoms');
     const shoes = pool.filter(i => i.category === 'Shoes');
     const accessories = pool.filter(i => i.category === 'Accessories');
 
-    if (tops.length === 0 || bottoms.length === 0) return [];
+    // --- GRACEFUL DEGRADATION ---
+    // At least one item is required. We no longer force Top + Bottom for a valid result.
+    if (pool.length === 0) return [];
 
     const results: Outfit[] = [];
     const ATTEMPTS = 10;
@@ -138,24 +157,45 @@ function generateFromPool(pool: ClosetItem[], title: string, styleTag: string): 
     for (let i = 0; i < ATTEMPTS; i++) {
         if (results.length >= 2) break;
 
-        const top = tops[Math.floor(Math.random() * tops.length)];
-        const bottom = bottoms[Math.floor(Math.random() * bottoms.length)];
+        const items: ClosetItem[] = [];
+        const top = tops.length > 0 ? tops[Math.floor(Math.random() * tops.length)] : null;
+        const bottom = bottoms.length > 0 ? bottoms[Math.floor(Math.random() * bottoms.length)] : null;
+        const shoe = shoes.length > 0 ? shoes[Math.floor(Math.random() * shoes.length)] : null;
+        const accessory = accessories.length > 0 ? accessories[Math.floor(Math.random() * accessories.length)] : null;
 
-        const items = [top, bottom];
-        if (shoes.length > 0) items.push(shoes[Math.floor(Math.random() * shoes.length)]);
-        if (accessories.length > 0) items.push(accessories[Math.floor(Math.random() * accessories.length)]);
+        if (top) items.push(top);
+        if (bottom) items.push(bottom);
+        if (shoe) items.push(shoe);
+        if (accessory) items.push(accessory);
+
+        if (items.length === 0) continue;
+
+        // --- ZERO EXCEPTION VALIDATION ---
+        // Every single item must pass the style enforcement gatekeeper.
+        const isAllCompatible = items.every(item => StyleMemory.isCompatible(item, occasion));
+        if (!isAllCompatible) {
+            console.log(`[STRICT] Rejected assembled outfit for ${title} due to item incompatibility.`);
+            continue;
+        }
 
         // Dedup check (simple)
         const id = items.map(k => k.id).sort().join('-');
-        // @ts-ignore
-        if (!results.some(r => r.items.map(k => k.id).sort().join('-') === id)) {
+        if (!results.some(r => r.items.map(m => m.id).sort().join('-') === id)) {
             const hasUserItem = items.some(it => it.image.includes('supabase') || it.image.includes('blob:'));
+
+            // Check for completeness
+            let warning = '';
+            if (!top || !bottom) {
+                warning = `Wardrobe limitation: Missing compatible ${!top ? 'tops' : 'bottoms'} for a full ${occasion} look.`;
+            }
+
             results.push({
                 id: crypto.randomUUID(),
                 items,
                 title,
                 styleTag,
-                score: 0.9 + (hasUserItem ? 0.1 : 0)
+                score: 0.9 + (hasUserItem ? 0.1 : 0),
+                missingCategoryWarning: warning
             });
         }
     }

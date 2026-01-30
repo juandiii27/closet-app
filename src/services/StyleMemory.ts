@@ -20,65 +20,148 @@ export const StyleMemory = {
 
         // Default Profile
         let profile: StyleProfile = {
-            formality: 5,
+            formality: isUserUpload ? 6 : 5, // User uploads get a slight bump if mystery
             vibes: ['Casual'],
             isUserUpload
         };
 
-        // --- 1. DETECT FORMALITY & VIBE ---
+        // --------------------
+        // TOP TYPE DETECTION
+        // --------------------
+        const isTop = item.category === 'Tops';
 
-        // SPORTY / ATHLEISURE (Formality 1-3)
-        if (checkKeywords(text, ['hoodie', 'sweat', 'tech', 'track', 'jogger', 'running', 'gym', 'athletic', 'short', 'accessoriesshoes', 'trainer', 'sneaker', 'active'])) {
-            profile.formality = 2;
-            profile.vibes = ['Sporty', 'Streetwear']; // Hoodies can be both
+        const hasFormalMarkers = checkKeywords(text, [
+            'button', 'collar', 'oxford', 'linen', 'dress-shirt'
+        ]);
+
+        const isDressShirt =
+            isTop &&
+            hasFormalMarkers;
+
+        const isTee =
+            isTop &&
+            !isDressShirt &&
+            (
+                // Standard detection: Not a formal item
+                (!isUserUpload && !checkKeywords(text, ['polo', 'knit', 'sweater', 'button', 'collar', 'oxford', 'linen'])) ||
+                // Upload detection: MUST have explicit tee keywords to be a tee
+                (isUserUpload && checkKeywords(text, ['t-shirt', 'tee', 'tank', 'graphic']))
+            );
+
+
+
+        // --------------------
+        // ATHLETIC DETECTION (FIXED SHORTS LOGIC)
+        // --------------------
+        const isAthleticShort = checkKeywords(text, [
+            'gym short',
+            'training short',
+            'running short',
+            'basketball short',
+            'mesh short'
+        ]);
+
+        const hasAthleticKeywords =
+            checkKeywords(text, [
+                'tech', 'track', 'running', 'gym', 'athletic', 'mesh',
+                'dry-fit', 'performance', 'active', 'sweat', 'jogger', 'hoodie'
+            ]) || isAthleticShort;
+
+        // AMBIGUITY CLAUSE — USER UPLOAD WILDCARD
+        if (
+            isUserUpload &&
+            (item.category === 'Tops' || item.category === 'Bottoms') &&
+            !hasAthleticKeywords &&
+            !hasFormalMarkers &&
+            !isTee
+        ) {
+            profile.formality = 5; // Neutral midpoint
+            profile.vibes = ['Casual']; // Neutral, NOT Sporty, NOT Formal
+            (profile as any).isAmbiguous = true; // internal flag
         }
 
-        // STREETWEAR (Formality 3-4)
-        if (checkKeywords(text, ['graphic', 'tee', 't-shirt', 'oversize', 'cargo', 'baggy', 'denim', 'jordan', 'dunk', 'cap'])) {
+        // 🔒 HARD LOCK — ATHLETIC NEVER EVOLVES
+        if (hasAthleticKeywords && !isDressShirt && !(profile as any).isAmbiguous) {
+            return {
+                formality: 2,
+                vibes: ['Sporty'],
+                isUserUpload
+            };
+        }
+
+        // --------------------
+        // TOP CLASSIFICATION
+        // --------------------
+        if (isDressShirt) {
+            profile.formality = 7;
+            profile.vibes = ['Smart Casual', 'Old Money'];
+        }
+        else if (isTee) {
             profile.formality = 3;
-            // T-Shirts are allowed in Gym (Sporty) AND Streetwear
-            profile.vibes = ['Streetwear', 'Casual', 'Sporty'];
+            profile.vibes = ['Casual', 'Streetwear'];
         }
 
-        // CASUAL / ESSENTIALS (Formality 4-5)
-        if (checkKeywords(text, ['plain', 'basic', 'cotton', 'jeans', 'blue', 'white'])) {
-            profile.formality = 4;
-            if (!profile.vibes.includes('Sporty')) profile.vibes.push('Casual');
+        // --------------------
+        // SNEAKER LOGIC (REFINED)
+        // --------------------
+        if (checkKeywords(text, ['sneaker', 'trainer', 'jordan', 'dunk'])) {
+            const isCleanSneaker = checkKeywords(text, ['leather', 'minimal', 'white']);
+
+            profile.formality = isCleanSneaker ? 4 : 2;
+            profile.vibes = isCleanSneaker
+                ? ['Casual', 'Smart Casual']
+                : ['Sporty', 'Streetwear'];
         }
 
-        // SMART CASUAL / OLD MONEY (Formality 6-8)
-        // Removed generic 'shirt' to avoid matching 't-shirt' or 'sweatshirt'
-        if (checkKeywords(text, ['polo', 'linen', 'chino', 'beige', 'khaki', 'loafer', 'boat', 'knit', 'sweater', 'button', 'collar', 'dress shirt', 'oxford'])) {
+        // --------------------
+        // CASUAL ESSENTIALS (NO TEE PROMOTION)
+        // --------------------
+        if (
+            !isTee &&
+            checkKeywords(text, ['plain', 'basic', 'cotton', 'jeans', 'straw', 'hat', 'cap'])
+        ) {
+            profile.formality = isUserUpload ? 5 : 4;
+            if (!profile.vibes.includes('Casual')) profile.vibes.push('Casual');
+        }
+
+        // POLOS ("T-Shirts with Buttons") - Formality 5.5
+        // They are cleaner than tees (3) but less formal than dress shirts (7)
+        if (checkKeywords(text, ['polo'])) {
+            profile.formality = 5.5;
+            profile.vibes = ['Old Money', 'Smart Casual'];
+        }
+
+        // SMART CASUAL / OLD MONEY (Formality 7-8)
+        if (checkKeywords(text, ['linen', 'chino', 'beige', 'khaki', 'knit', 'sweater', 'button', 'collar', 'oxford', 'loafer', 'boat'])) {
             profile.formality = 7;
             profile.vibes = ['Old Money', 'Smart Casual'];
         }
 
-        // BUSINESS / FORMAL (Formality 8-10)
-        // Removed 'dress' generic word if it matches 'dress-down', but 'dress' usually implies formal in category.
-        if (checkKeywords(text, ['suit', 'blazer', 'trouser', 'tuxedo', 'leather', 'tie', 'formal', 'watch'])) {
+        // FORMAL (Formality 8-10)
+        if (checkKeywords(text, ['suit', 'blazer', 'trouser', 'tuxedo', 'leather', 'tie', 'formal', 'dress shirt', 'button down'])) {
             profile.formality = 9;
-            profile.vibes = ['Business', 'Formal', 'Old Money']; // Overlap with Old Money
+            profile.vibes = ['Formal', 'Business', 'Old Money'];
         }
 
-        // WATCH SPECIAL CASE
-        if (checkKeywords(text, ['watch', 'rolex', 'timex', 'seiko'])) {
-            // Watches are usually dressy unless explicitly 'sport watch' (which we assume strict 'watch' keyword implies generic/dressy in this mock)
-            profile.formality = 8;
-            profile.vibes = ['Old Money', 'Business'];
-        }
+        // --- 2. ISOLATION: SHIRT VS T-SHIRT ---
+        // (Old block removed as isTee is now defined earlier and stronger)
 
-        // USER UPLOAD OVERRIDE (Chameleon Mode)
-        // If it's a User Upload (blob/base64/processed) and we haven't detected a specific strong vibe (still just Casual),
-        // we assume it is versatile. We give it the benefit of the doubt so it works in Sport/Streetwear.
-        // We do NOT give it 'Formal' or 'Business' to avoid Blazers in the Gym, but we allow 'Sporty'.
-        if (isUserUpload) {
-            // If we didn't detect a specific HIGH formality (like Suit) or LOW formality (Sport), just broaden the vibes
-            // so it passes the "Strict Sport" check.
-            if (profile.formality >= 4 && profile.formality <= 6) {
-                if (!profile.vibes.includes('Sporty')) profile.vibes.push('Sporty');
-                if (!profile.vibes.includes('Streetwear')) profile.vibes.push('Streetwear');
-                if (!profile.vibes.includes('Smart Casual')) profile.vibes.push('Smart Casual');
+        // RE-CHECK GENERIC "SHIRT" - Only promote if it's actually FORMAL
+        if (text.includes('shirt') && hasFormalMarkers) {
+            if (profile.formality < 7) {
+                profile.formality = 7;
+                profile.vibes = ['Old Money', 'Smart Casual'];
             }
+        }
+
+        // --------------------
+        // WATCHES (SUPPORTIVE, NOT DOMINANT)
+        // --------------------
+        if (checkKeywords(text, ['watch', 'rolex', 'timex', 'seiko'])) {
+            profile.formality = Math.max(profile.formality, 7);
+            profile.vibes = Array.from(
+                new Set([...profile.vibes, 'Old Money'])
+            );
         }
 
         return profile;
@@ -86,79 +169,78 @@ export const StyleMemory = {
 
     /**
      * The Gatekeeper: Decides if an item belongs in a specific Occasion.
+     * ACCURACY > OUTPUT: One fail = No outfit.
+     * NOW: Uses strict Vibe & Formality checks from the optimized "Brain" (analyzeItem).
+     * No more text re-parsing here.
      */
     isCompatible(item: ClosetItem, occasion: string): boolean {
         const profile = StyleMemory.analyzeItem(item);
-        const target = getOccasionRules(occasion);
+        const text = ((item.image || '') + ' ' + (item.category || '')).toLowerCase();
 
-        // 1. FORMALITY CHECK
-        // Item must be within range (e.g. Can't wear Formality 9 to Formality 2 event)
-        // We allow +/- 3 range for user uploads, stricter for mocks.
-        // Sport requires Formality <= 4
-        if (target.strictSport && profile.formality > 6 && !profile.isUserUpload) return false;
+        // 🇩🇴 DOMINICAN REPUBLIC STYLE RULES (Vibe-Based)
+        switch (occasion) {
+            case 'Sport':
+            case 'Athleisure':
+                if ((profile as any).isAmbiguous) return true;
+                // 🇩🇴 SPORT RULES: Pure function.
+                // MUST have Sporty vibe.
+                // ABSOLUTELY NO Dress Pants/Jeans
+                if (checkKeywords(text, ['pant', 'trouser', 'jeans', 'legging', 'chino', 'slack'])) return false;
+                // ABSOLUTELY NO: Business, Formal, Old Money (Polos/Chinos are detected as these).
+                if (profile.vibes.includes('Business') || profile.vibes.includes('Formal') || profile.vibes.includes('Old Money')) {
+                    return false;
+                }
+                return profile.vibes.includes('Sporty');
 
-        // 2. VIBE MATCH
-        // Item must share at least one vibe with the target
-        const hasMatchingVibe = profile.vibes.some(v => target.vibes.includes(v));
+            case 'Dinner':
+            case 'Old Money':
+                if (
+                    profile.vibes.includes('Sporty') ||
+                    profile.vibes.includes('Streetwear') ||
+                    (profile.vibes.includes('Casual') && !profile.vibes.includes('Old Money'))
+                ) {
+                    return false;
+                }
+                return profile.formality >= 5.5;
 
-        // 3. EXPLICIT BANS
-        // E.g. No 'Business' items in 'Sport'
-        const isBanned = profile.vibes.some(v => target.bannedVibes.includes(v));
+            case 'Date':
+                // 🇩🇴 DATE RULES: Effort + Confidence.
+                // ABSOLUTELY NO: Sporty (Gym wear).
+                if (profile.vibes.includes('Sporty')) {
+                    return false;
+                }
+                // Formality check: 5+ (Allow nice Casual + Smart Casual)
+                return profile.formality >= 5;
 
-        if (isBanned) return false;
+            case 'Party':
+                // 🇩🇴 PARTY RULES: Stylish.
+                // ABSOLUTELY NO: Sporty (Gym shorts).
+                if (profile.vibes.includes('Sporty')) {
+                    return false;
+                }
+                // Flexible formality, but usually not strict Business (unless stylish)
+                return profile.vibes.includes('Streetwear') || profile.vibes.includes('Casual') || profile.vibes.includes('Smart Casual') || profile.vibes.includes('Party');
 
-        // If it's a User Upload, be slightly more lenient IF not banned
-        if (profile.isUserUpload && !isBanned) {
-            return true; // Chameleon Mode active
+            case 'Work':
+                // 🇩🇴 WORK RULES: Professional.
+                if ((profile as any).isAmbiguous) return false;
+                if (profile.vibes.includes('Sporty') || profile.vibes.includes('Streetwear')) {
+                    return false;
+                }
+                return profile.vibes.includes('Business') || profile.vibes.includes('Smart Casual') || profile.vibes.includes('Formal');
+
+            default: // Casual
+                // 🇩🇴 CASUAL RULES: Relaxed.
+                // ABSOLUTELY NO: Formal (Tuxedos).
+                if (profile.vibes.includes('Formal') || profile.vibes.includes('Business')) {
+                    return false;
+                }
+                return true;
         }
-
-        return hasMatchingVibe;
     }
 };
 
-// --- HELPER: Define what each Occasion expects ---
-function getOccasionRules(occasion: string) {
-    switch (occasion) {
-        case 'Sport':
-        case 'Athleisure':
-            return {
-                targetFormality: 2,
-                vibes: ['Sporty'],
-                bannedVibes: ['Business', 'Formal', 'Old Money', 'Smart Casual'], // STRICT BAN on Watch/Loafers
-                strictSport: true
-            };
-        case 'Dinner':
-        case 'Date':
-        case 'Old Money':
-            return {
-                targetFormality: 8,
-                vibes: ['Old Money', 'Smart Casual', 'Business', 'Formal'],
-                bannedVibes: ['Sporty', 'Streetwear'], // No Hoodies
-                strictSport: false
-            };
-        case 'Work':
-            return {
-                targetFormality: 9,
-                vibes: ['Business', 'Smart Casual'],
-                bannedVibes: ['Sporty'],
-                strictSport: false
-            };
-        case 'Party':
-            return {
-                targetFormality: 5,
-                vibes: ['Streetwear', 'Casual', 'Smart Casual'], // Flexible
-                bannedVibes: ['Sporty'], // Usually no gym clothes at parties
-                strictSport: false
-            };
-        default: // Casual
-            return {
-                targetFormality: 4,
-                vibes: ['Casual', 'Streetwear'],
-                bannedVibes: ['Formal'], // No Tuxedos
-                strictSport: false
-            };
-    }
-}
+
 
 function checkKeywords(text: string, keywords: string[]) {
     return keywords.some(k => text.includes(k));

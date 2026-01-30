@@ -52,6 +52,8 @@ export function OutfitCollage({ items, onItemClick }: OutfitCollageProps) {
                 <ItemWrapper item={item} className="w-full h-full flex items-center justify-center">
                     <img
                         src={item.image}
+                        crossOrigin="anonymous"
+                        referrerPolicy="no-referrer"
                         className="w-full h-full object-contain mix-blend-multiply drop-shadow-2xl"
                         alt="Spotlight Item"
                     />
@@ -84,7 +86,7 @@ export function OutfitCollage({ items, onItemClick }: OutfitCollageProps) {
             {layer && (
                 <div className="absolute top-[5%] right-[10%] w-[35%] h-[30%] flex items-center justify-center z-10 opacity-90">
                     <ItemWrapper item={layer} className="w-full h-full flex items-center justify-center rotate-6 scale-95 opacity-90 blur-[0.5px]">
-                        <img src={layer.image} className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-sm" alt="Layer" />
+                        <img src={layer.image} crossOrigin="anonymous" referrerPolicy="no-referrer" className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-sm" alt="Layer" />
                     </ItemWrapper>
                 </div>
             )}
@@ -94,7 +96,7 @@ export function OutfitCollage({ items, onItemClick }: OutfitCollageProps) {
             {bottom && (
                 <div className="absolute top-[30%] left-[25%] w-[70%] h-[60%] flex items-start justify-center z-10">
                     <ItemWrapper item={bottom} className="w-full h-full flex items-start justify-center">
-                        <img src={bottom.image} className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-[0_20px_40px_rgba(0,0,0,0.12)]" alt="Bottom" />
+                        <img src={bottom.image} crossOrigin="anonymous" referrerPolicy="no-referrer" className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-[0_20px_40px_rgba(0,0,0,0.12)]" alt="Bottom" />
                     </ItemWrapper>
                 </div>
             )}
@@ -104,7 +106,7 @@ export function OutfitCollage({ items, onItemClick }: OutfitCollageProps) {
             {(baseTop) && (
                 <div className="absolute top-[0%] left-[2%] w-[50%] h-[55%] flex items-center justify-center z-30">
                     <ItemWrapper item={baseTop} className="w-full h-full flex items-center justify-center">
-                        <img src={baseTop.image} className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-[0_25px_50px_rgba(0,0,0,0.25)]" alt="Top" />
+                        <img src={baseTop.image} crossOrigin="anonymous" referrerPolicy="no-referrer" className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-[0_25px_50px_rgba(0,0,0,0.25)]" alt="Top" />
                     </ItemWrapper>
                 </div>
             )}
@@ -114,7 +116,7 @@ export function OutfitCollage({ items, onItemClick }: OutfitCollageProps) {
             {shoes && (
                 <div className="absolute bottom-[20%] left-[5%] w-[25%] h-[25%] flex items-center justify-center z-40">
                     <ItemWrapper item={shoes} className="w-full h-full flex items-center justify-center">
-                        <img src={shoes.image} className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-xl -rotate-12" alt="Shoes" />
+                        <img src={shoes.image} crossOrigin="anonymous" referrerPolicy="no-referrer" className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-xl -rotate-12" alt="Shoes" />
                     </ItemWrapper>
                 </div>
             )}
@@ -125,7 +127,7 @@ export function OutfitCollage({ items, onItemClick }: OutfitCollageProps) {
             {headwear && (
                 <div className="absolute top-[2%] right-[5%] w-[20%] h-[15%] flex items-center justify-center z-40">
                     <ItemWrapper item={headwear} className="w-full h-full flex items-center justify-center">
-                        <img src={headwear.image} className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-lg rotate-12" alt="Hat" />
+                        <img src={headwear.image} crossOrigin="anonymous" referrerPolicy="no-referrer" className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-lg rotate-12" alt="Hat" />
                     </ItemWrapper>
                 </div>
             )}
@@ -134,7 +136,7 @@ export function OutfitCollage({ items, onItemClick }: OutfitCollageProps) {
             {otherAccessories[0] && (
                 <div className="absolute top-[45%] right-[5%] w-[20%] h-[18%] flex items-center justify-center z-40">
                     <ItemWrapper item={otherAccessories[0]} className="w-full h-full flex items-center justify-center">
-                        <img src={otherAccessories[0].image} className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-md" alt="Acc 1" />
+                        <img src={otherAccessories[0].image} crossOrigin="anonymous" referrerPolicy="no-referrer" className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-md" alt="Acc 1" />
                     </ItemWrapper>
                 </div>
             )}
@@ -143,7 +145,7 @@ export function OutfitCollage({ items, onItemClick }: OutfitCollageProps) {
             {otherAccessories[1] && (
                 <div className="absolute bottom-[18%] right-[5%] w-[20%] h-[15%] flex items-center justify-center z-40">
                     <ItemWrapper item={otherAccessories[1]} className="w-full h-full flex items-center justify-center">
-                        <img src={otherAccessories[1].image} className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-md rotate-6" alt="Acc 2" />
+                        <img src={otherAccessories[1].image} crossOrigin="anonymous" referrerPolicy="no-referrer" className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-md rotate-6" alt="Acc 2" />
                     </ItemWrapper>
                 </div>
             )}

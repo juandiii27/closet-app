@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '../components/ui/Button';
 import { Sparkles, X, Heart, RefreshCw, Share2, Calendar, Trash2 } from 'lucide-react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useCloset } from '../hooks/useCloset';
 import { StylistService, type Outfit, type PlannedOutfit } from '../services/StylistService';
 import { OutfitCollage } from '../components/OutfitCollage';
@@ -176,13 +177,16 @@ export default function Outfits() {
                             <div className="space-y-3">
                                 {plannedOutfits.map((plan) => (
                                     <div key={plan.id} className="flex items-center gap-4 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                        <div className="h-16 w-16 rounded-xl overflow-hidden border border-gray-100 shrink-0">
+                                            <OutfitCollage items={plan.outfit.items} />
+                                        </div>
                                         <div className="flex-1">
                                             <p className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-1">
                                                 {new Date(plan.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
                                             </p>
                                             <div className="flex -space-x-2 overflow-hidden">
                                                 {plan.outfit.items.slice(0, 4).map((item, i) => (
-                                                    <img key={i} src={item.image} className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover bg-white" alt="" />
+                                                    <img key={i} src={item.image} crossOrigin="anonymous" referrerPolicy="no-referrer" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover bg-white" alt="" />
                                                 ))}
                                             </div>
                                         </div>
@@ -219,16 +223,35 @@ export default function Outfits() {
     }
 
     if (!currentCard) {
+        const isFormal = ['Dinner', 'Date', 'Work'].includes(occasion);
+
         return (
             <div className="h-full flex flex-col items-center justify-center p-6 text-center">
                 <div className="bg-gray-50 p-6 rounded-full mb-6">
-                    <RefreshCw className="w-12 h-12 text-black" />
+                    {isFormal ? (
+                        <X className="w-12 h-12 text-red-500" />
+                    ) : (
+                        <RefreshCw className="w-12 h-12 text-black" />
+                    )}
                 </div>
-                <h2 className="text-xl font-bold mb-2">All Caught Up</h2>
-                <p className="text-gray-500 mb-8">Come back later for more recommendations.</p>
-                <Button onClick={() => setStep('setup')}>
-                    Start Over
-                </Button>
+                <h2 className="text-xl font-bold mb-2">
+                    {isFormal ? "Accuracy Over Output" : "All Caught Up"}
+                </h2>
+                <p className="text-gray-500 mb-8 max-w-[280px]">
+                    {isFormal
+                        ? `Not enough suitable items for a ${occasion} (Old Money) outfit. Please add formal or smart-casual pieces.`
+                        : "Come back later for more recommendations."}
+                </p>
+                <div className="flex flex-col gap-3 w-full max-w-xs">
+                    <Button onClick={() => setStep('setup')}>
+                        Start Over
+                    </Button>
+                    {isFormal && (
+                        <Link to="/upload" className="text-black font-medium hover:underline text-sm">
+                            Add Formal Items
+                        </Link>
+                    )}
+                </div>
             </div>
         );
     }

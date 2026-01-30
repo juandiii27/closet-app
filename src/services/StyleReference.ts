@@ -35,7 +35,7 @@ export const StyleReferenceService = {
                 colors: ['navy', 'white', 'cream', 'beige', 'blue', 'brown'],
                 fabrics: ['linen', 'cotton'],
                 requiredItems: ['shirt', 'polo', 'chino', 'loafer'],
-                bannedItems: ['hoodie', 'sneaker', 'graphic', 'nylon']
+                bannedItems: ['hoodie', 'sneaker', 'graphic', 'nylon', 't-shirt', 'performance', 'short']
             });
             boards.push({
                 id: 'om-city',
@@ -100,12 +100,16 @@ export const StyleReferenceService = {
         // 1. HARD BAN CHECK
         if (board.bannedItems.some(ban => text.includes(ban))) return -100;
 
-        // 2. USER UPLOAD EXCEPTION (The "Chameleon" Rule from StyleMemory)
-        // If it's a user upload, we assume it matches color/fabric broadly unless banned
-        const isUserUpload = item.image.includes('supabase') || item.image.includes('base64') || item.image.startsWith('blob:') || item.image.includes('processed-image');
-        if (isUserUpload) return 100; // ALWAYS ALLOW USER UPLOADS. We cannot read their keywords, so we trust them.
-
+        // 2. ITEM CHECK
+        // If the item matches ANY of the required types for the board, give it a baseline match
         let score = 0;
+
+        const isUserUpload = item.image.includes('supabase') || item.image.includes('base64') || item.image.startsWith('blob:') || item.image.includes('processed-image');
+        if (isUserUpload) score += 1;
+
+        // Special case: If user says it's a Top/Bottom/etc in the category, and it's a user upload, 
+        // we check if it fits the *soul* of the board via StyleMemory in the calling service.
+        // Here we just score based on keywords.
 
         // 3. COLOR MATCH
         if (board.colors.some(c => text.includes(c))) score += 3;

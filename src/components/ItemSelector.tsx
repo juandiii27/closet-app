@@ -60,6 +60,8 @@ export function ItemSelector({ isOpen, onClose, onSelect, category, items }: Ite
                                             <img
                                                 src={item.image}
                                                 alt="Closet item"
+                                                crossOrigin="anonymous"
+                                                referrerPolicy="no-referrer"
                                                 className="w-full h-full object-contain p-2 mix-blend-multiply"
                                             />
                                         </button>

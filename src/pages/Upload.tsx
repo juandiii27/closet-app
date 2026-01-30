@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Category } from '../context/ClosetContext';
 import { StorageService } from '../services/StorageService';
 import { ImageService } from '../services/ImageService';
+import { VisionService } from '../services/VisionService';
 import { useAuth } from '../context/AuthContext';
 
 const CATEGORIES: Category[] = ['Tops', 'Bottoms', 'Shoes', 'Outerwear', 'Accessories', 'Other'];
@@ -30,6 +31,8 @@ export default function Upload() {
     // State for the raw file object
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [processedFile, setProcessedFile] = useState<File | null>(null);
+    const [aiTags, setAiTags] = useState<string | null>(null);
+    const [visionError, setVisionError] = useState<string | null>(null); // NEW: Error state
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -41,8 +44,10 @@ export default function Upload() {
             reader.onloadend = () => {
                 const result = reader.result as string;
                 setSelectedImage(result);
-                setOriginalImage(result); // Store original
+                setOriginalImage(result);
                 setStep('preview');
+                setAiTags(null);
+                setVisionError(null); // Reset error
             };
             reader.readAsDataURL(file);
         }
@@ -50,20 +55,43 @@ export default function Upload() {
 
     const handleProcess = async () => {
         setStep('processing');
+        setVisionError(null);
 
         if (!selectedFile) {
-            setStep('result'); // Fallback
+            setStep('result');
             return;
         }
 
         try {
-            // Add a timeout race to prevent infinite spinning
+            // 1. Parallel Processing: Remove Background + Analyze Image (Vision API)
             const processPromise = ImageService.removeBackground(selectedFile);
+
+            // Vision analysis with precise error catching
+            const analysisPromise = VisionService.analyzeClothing(selectedFile).catch(err => {
+                console.error("Vision API Error:", err);
+                return { error: err.message || "Unknown error" }; // Return object on error
+            });
+
             const timeoutPromise = new Promise<Blob>((_, reject) =>
-                setTimeout(() => reject(new Error('Request timed out')), 20000)
+                setTimeout(() => reject(new Error('Request timed out')), 25000)
             );
 
-            const processedBlob = await Promise.race([processPromise, timeoutPromise]);
+            // Wait for both results
+            const [processedBlob, visionResult] = await Promise.all([
+                Promise.race([processPromise, timeoutPromise]),
+                analysisPromise
+            ]);
+
+            // Handle Vision Result
+            if (typeof visionResult === 'object' && visionResult.error) {
+                setVisionError(visionResult.error); // Show error in UI
+                console.warn("Vision Failed:", visionResult.error);
+            } else if (typeof visionResult === 'string' && visionResult.length > 0) {
+                console.log("👗 AI Vision Tags:", visionResult);
+                setAiTags(visionResult);
+            } else {
+                setVisionError("No description returned.");
+            }
 
             // Convert Blob to Base64 for preview
             const reader = new FileReader();
@@ -73,13 +101,19 @@ export default function Upload() {
             };
             reader.readAsDataURL(processedBlob);
 
-            // Create a new File object from the blob to upload later
-            const refinedFile = new File([processedBlob], selectedFile.name, { type: 'image/png' });
+            // 2. SMART RENAMING
+            // If tags exist, rename the file! e.g. "blue_polo_old_money.png"
+            const tags = typeof visionResult === 'string' ? visionResult : "";
+            const newFileName = tags
+                ? `${tags}.png`
+                : `processed-image_${Date.now()}.png`;
+
+            const refinedFile = new File([processedBlob], newFileName, { type: 'image/png' });
             setProcessedFile(refinedFile);
+
         } catch (error) {
-            console.error("Background removal failed", error);
-            alert("Could not remove background. Using original image.");
-            // Fallback to original
+            console.error("Image processing failed", error);
+            alert("Could not process image completely. Using original.");
             setStep('result');
         }
     };
@@ -89,21 +123,19 @@ export default function Upload() {
         setIsSaving(true);
 
         try {
-            // 1. Upload to Storage (Use processed file if available!)
             const fileToUpload = processedFile || selectedFile;
             const imageUrl = await StorageService.uploadImage(user.id, fileToUpload);
 
-            // 2. Add to Database
             await addItem({
                 image: imageUrl,
                 category: selectedCategory,
-                gender: profile?.gender || 'Unisex', // Fallback to Unisex if no profile
+                gender: profile?.gender || 'Unisex',
             });
 
             navigate('/');
         } catch (error) {
             console.error("Upload failed details:", error);
-            alert(`Failed to save item: ${(error as any).message || 'Unknown error'}`);
+            alert(`Failed to save item: ${(error as any).message}`);
         } finally {
             setIsSaving(false);
         }
@@ -112,8 +144,10 @@ export default function Upload() {
     const reset = () => {
         setSelectedImage(null);
         setOriginalImage(null);
-        setSelectedFile(null); // Also reset the file object
+        setSelectedFile(null);
         setProcessedFile(null);
+        setAiTags(null);
+        setVisionError(null);
         setStep('select');
     };
 
@@ -193,8 +227,8 @@ export default function Upload() {
                             <div className="absolute inset-0 bg-black blur-xl opacity-10 animate-pulse rounded-full" />
                             <Loader2 className="w-16 h-16 text-black animate-spin relative z-10" />
                         </div>
-                        <h3 className="text-xl font-semibold mb-2">Refining Image...</h3>
-                        <p className="text-gray-500">Removing background and enhancing lighting</p>
+                        <h3 className="text-xl font-semibold mb-2">My Designer Eye is Looking...</h3>
+                        <p className="text-gray-500">Analyzing style, fabric, and vibe...</p>
                     </motion.div>
                 )}
 
@@ -219,6 +253,32 @@ export default function Upload() {
                                 </Button>
                             </div>
                         </div>
+
+                        {/* AI TAG DISPLAY */}
+                        {aiTags && (
+                            <div className="mb-4 p-3 bg-purple-50 border border-purple-100 rounded-lg flex items-start gap-3">
+                                <Wand2 className="w-5 h-5 text-purple-600 mt-0.5" />
+                                <div>
+                                    <h4 className="text-sm font-semibold text-purple-900">Detected Style:</h4>
+                                    <p className="text-xs text-purple-700 mt-1 leading-relaxed capitalize">
+                                        {aiTags.split('_').join(', ')}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* ERROR DISPLAY */}
+                        {visionError && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-lg flex items-start gap-3">
+                                <div className="text-red-600 font-bold">!</div>
+                                <div>
+                                    <h4 className="text-sm font-semibold text-red-900">Vision Error:</h4>
+                                    <p className="text-xs text-red-700 mt-1">
+                                        {visionError}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="flex flex-col gap-3">
                             <label className="text-sm font-medium text-gray-700 px-1">Select Category:</label>
