@@ -32,6 +32,7 @@ export default function Upload() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [processedFile, setProcessedFile] = useState<File | null>(null);
     const [aiTags, setAiTags] = useState<string | null>(null);
+    const [fullVisionResult, setFullVisionResult] = useState<any>(null); // Store full JSON
     const [visionError, setVisionError] = useState<string | null>(null); // NEW: Error state
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,6 +87,25 @@ export default function Upload() {
             if (typeof visionResult === 'object' && visionResult.error) {
                 setVisionError(visionResult.error); // Show error in UI
                 console.warn("Vision Failed:", visionResult.error);
+                setFullVisionResult(null);
+            } else if (typeof visionResult === 'object') {
+                // Success case with Object
+                // If it's the simplified string (legacy), we won't see this branch typically
+                // But VisionService returns JSON object now by default for 2.0+
+                console.log("👗 AI Vision Data:", visionResult);
+
+                const result = visionResult as any;
+
+                // Build tag string for filename/display
+                const desc = [
+                    result.primaryColor,
+                    result.subCategory,
+                    result.fitAppearance,
+                    result.formalitySignal
+                ].filter(Boolean).join('_').toLowerCase();
+
+                setAiTags(desc);
+                setFullVisionResult(visionResult);
             } else if (typeof visionResult === 'string' && visionResult.length > 0) {
                 console.log("👗 AI Vision Tags:", visionResult);
                 setAiTags(visionResult);
@@ -130,6 +150,14 @@ export default function Upload() {
                 image: imageUrl,
                 category: selectedCategory,
                 gender: profile?.gender || 'Unisex',
+                // Save AI Metadata
+                subCategory: fullVisionResult?.subCategory,
+                primaryColor: fullVisionResult?.primaryColor,
+                secondaryColors: fullVisionResult?.secondaryColors,
+                formalitySignal: fullVisionResult?.formalitySignal,
+                fabricAppearance: fullVisionResult?.fabricAppearance,
+                fitAppearance: fullVisionResult?.fitAppearance,
+                patterns: fullVisionResult?.patterns,
             });
 
             navigate('/');

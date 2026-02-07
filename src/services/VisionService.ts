@@ -13,38 +13,51 @@ export const VisionService = {
             throw new Error("Configuration Error: VITE_GEMINI_API_KEY is missing in .env");
         }
 
-        // Valid models found via list_models.js (Gemini 1.5 is missing for this key)
-        const MODELS_TO_TRY = ["gemini-2.0-flash", "gemini-flash-latest", "gemini-2.5-flash"];
+        // Valid models found via list_models.js
+        const MODELS_TO_TRY = ["gemini-2.5-flash-lite"];
         let lastError: any = null;
 
         // 1. Prepare Image
         const base64Image = await fileToGenerativePart(file);
         const genAI = new GoogleGenerativeAI(API_KEY);
 
-        // 2. Prompt Engineering
+        // 2. Prompt Engineering (Structured JSON)
         const prompt = `
-            You provide tags for a fashion app. 
-            Identify the item in this image. 
-            Return ONLY a single string of keywords separated by underscores.
-            
-            Focus on:
-            1. The specific item type (e.g. "polo", "t-shirt", "dress_shirt", "hoodie").
-            2. The material if visible (e.g. "cotton", "linen", "knit").
-            3. The color (e.g. "navy", "white").
-            4. The style/vibe based on these rules:
-               - "old_money" if it has a collar, buttons, or looks like a polo/oxford.
-               - "sporty" if it looks like gym wear, dry-fit, or mesh.
-               - "casual" if it looks like a plain t-shirt.
-            
-            Example output format: "navy_blue_polo_shirt_cotton_old_money_smart_casual"
-            Do not include any other text.
+            You are a fashion-aware computer vision assistant used in a clothing outfit builder.
+            Your task is to analyze a single clothing item image and return a structured, conservative description.
+
+            IMPORTANT RULES:
+            - Do NOT guess brand names.
+            - Do NOT guess occasion.
+            - Do NOT invent missing details.
+            - If unsure, mark the field as "unknown".
+            - Prefer precision over creativity.
+            - Your output will be used by a strict rule-based outfit engine.
+
+            Return ONLY valid JSON. No commentary.
+
+            Analyze the clothing item in this image and extract its visual attributes.
+            Return the following fields:
+            - category: One of [Top, Bottom, Shoes, Accessory]
+            - subCategory: Specific garment type if clear (e.g., Polo, TShirt, Hoodie, Chino, Jeans, Loafer, Sneaker, Watch). Otherwise "unknown".
+            - neckline_or_structure: Describe presence of collar, buttons, structure, or lack thereof.
+            - primaryColor: The dominant visible color.
+            - secondaryColors: Any additional visible colors (array).
+            - fabricAppearance: Visual guess only (e.g., knit, woven, denim, leather, fleece). If unclear, "unknown".
+            - fitAppearance: One of [slim, regular, oversized, unknown].
+            - formalitySignal: One of [casual, smart-casual, formal, unknown] based purely on visual cues.
+            - patterns: Any visible patterns (e.g., stripes, solid, logo). If none, "none".
+            - confidenceScore: A number from 0 to 1 representing how confident you are in this analysis.
             `;
 
         // 3. Try Models Sequentially
         for (const modelName of MODELS_TO_TRY) {
             try {
                 console.log(`VisionService: Attempting model '${modelName}'...`);
-                const model = genAI.getGenerativeModel({ model: modelName });
+                const model = genAI.getGenerativeModel({
+                    model: modelName,
+                    generationConfig: { responseMimeType: "application/json" }
+                });
 
                 const result = await model.generateContent([prompt, base64Image]);
                 const response = await result.response;
@@ -52,9 +65,28 @@ export const VisionService = {
 
                 if (!text) throw new Error("API returned empty response");
 
-                // 4. Clean output and Return immediately on success
-                const safeTagString = text.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase().substring(0, 100);
-                return safeTagString;
+                // 4. Parse JSON and convert to tag string for compatibility
+                try {
+                    const data = JSON.parse(text);
+                    console.log("Vision JSON:", data);
+
+                    // Flatten to tags: "navy_blue_polo_cotton_smart_casual"
+                    const tags = [
+                        data.primaryColor,
+                        data.subCategory !== 'unknown' ? data.subCategory : data.category,
+                        data.fabricAppearance !== 'unknown' ? data.fabricAppearance : '',
+                        data.formalitySignal !== 'unknown' ? data.formalitySignal : '',
+                        ...(Array.isArray(data.secondaryColors) ? data.secondaryColors : []),
+                        data.patterns !== 'none' ? data.patterns : ''
+                    ].filter(t => t && t !== 'unknown').join('_').toLowerCase();
+
+                    const safeTagString = tags.replace(/[^a-zA-Z0-9_]/g, '_');
+                    return safeTagString;
+                } catch (jsonError) {
+                    console.warn("Failed to parse Vision JSON, falling back to raw text cleanup", jsonError);
+                    const safeTagString = text.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase().substring(0, 100);
+                    return safeTagString;
+                }
 
             } catch (error: any) {
                 console.warn(`VisionService: Model '${modelName}' failed:`, error.message);

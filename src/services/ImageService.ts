@@ -1,55 +1,29 @@
+import { removeBackground } from "@imgly/background-removal";
 
 export const ImageService = {
+  /**
+   * Removes the background from an image file using a local WASM library.
+   * This runs entirely in the browser, is free, and unlimited.
+   */
   async removeBackground(file: File): Promise<Blob> {
-    const primaryKey = import.meta.env.VITE_REMOVE_BG_API_KEY;
-    const backupKey = import.meta.env.VITE_REMOVE_BG_API_KEY_BACKUP;
-
-    if (!primaryKey) {
-      console.warn("Remove.bg API key is missing. Returning original image.");
-      alert("API Key missing! Please check .env file.");
-      return file;
-    }
-
-    const removeBgCall = async (apiKey: string) => {
-      const formData = new FormData();
-      formData.append("image_file", file);
-      formData.append("size", "auto");
-
-      const response = await fetch("https://api.remove.bg/v1.0/removebg", {
-        method: "POST",
-        headers: { "X-Api-Key": apiKey },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`${response.status} ${response.statusText} - ${errorText}`);
-      }
-
-      return await response.blob();
-    };
+    console.log("Starting local background removal...");
 
     try {
-      console.log("Removing background via remove.bg API (Primary Key)...");
-      return await removeBgCall(primaryKey);
-    } catch (error: any) {
-      console.error("Primary key failed:", error);
-
-      // Check if we should try the backup key (Authorization or Credits issues)
-      // 402 = Payment Required (Out of credits), 401 = Unauthorized
-      const errorMessage = error.message || "";
-      if (backupKey && (errorMessage.includes("402") || errorMessage.includes("401"))) {
-        console.log("Switching to Backup API Key...");
-        try {
-          return await removeBgCall(backupKey);
-        } catch (backupError: any) {
-          console.error("Backup key also failed:", backupError);
-          alert(`Both API keys failed. Backup error: ${backupError.message || backupError}`);
-          return file;
+      // The library handles everything: resizing, processing, and returning a Blob.
+      // It downloads ~10MB of models on the first run, then caches them.
+      const blob = await removeBackground(file, {
+        progress: (key, current, total) => {
+          console.debug(`RemoveBG Progress [${key}]: ${Math.round(current / total * 100)}%`);
         }
-      }
+      });
 
-      alert(`Error Removing Background: ${errorMessage}\n\nFalling back to original image.`);
+      console.log("Background removed successfully!");
+      return blob;
+
+    } catch (error) {
+      console.error("Local background removal failed:", error);
+      alert("Background removal failed on this device. Using original image.");
+      // Fallback: Return original file if the WASM crashes (e.g., extremely low memory)
       return file;
     }
   },

@@ -13,7 +13,7 @@ export interface ClosetItemContextType extends Omit<ClosetItem, 'user_id' | 'cre
 
 interface ClosetContextType {
     items: ClosetItem[];
-    addItem: (item: { image: string; category: Category; gender: Gender }) => Promise<void>;
+    addItem: (item: Omit<ClosetItem, 'id' | 'created_at' | 'user_id'>) => Promise<void>;
     deleteItem: (id: string) => Promise<void>;
     loading: boolean;
 }
@@ -52,15 +52,13 @@ export function ClosetProvider({ children }: { children: ReactNode }) {
         loadItems();
     }, [user]);
 
-    const addItem = async (newItem: { image: string; category: Category; gender: Gender }) => {
+    const addItem = async (newItem: Omit<ClosetItem, 'id' | 'created_at' | 'user_id'>) => {
         if (!user) return; // Should be protected anyway
 
         // Optimistic update (optional) or wait for server
         try {
             const savedItem = await ClosetService.addItem({
-                image: newItem.image,
-                category: newItem.category,
-                gender: newItem.gender,
+                ...newItem,
                 user_id: user.id
             });
             setItems(prev => [savedItem, ...prev]);

@@ -8,6 +8,7 @@ import { StylistService, type Outfit, type PlannedOutfit } from '../services/Sty
 import { OutfitCollage } from '../components/OutfitCollage';
 import { ItemSelector } from '../components/ItemSelector';
 import type { ClosetItem } from '../services/ClosetService';
+import { OutfitAssemblyLoader } from '../components/ui/OutfitAssemblyLoader';
 
 export default function Outfits() {
     const { items } = useCloset();
@@ -26,10 +27,12 @@ export default function Outfits() {
     const [step, setStep] = useState<'setup' | 'results'>('setup');
     const [occasion, setOccasion] = useState('Casual');
     const [weather, setWeather] = useState('Sunny');
+    const [timeOfDay, setTimeOfDay] = useState('Noon');
 
     // Added 'Dinner' as requested by user
     const OCCASIONS = ['Casual', 'Work', 'Party', 'Date', 'Dinner', 'Sport'];
     const WEATHERS = ['Sunny', 'Rainy', 'Cold', 'Hot'];
+    const TIMES = ['Morning', 'Noon', 'Night'];
 
     // Load planned outfits on mount
     useEffect(() => {
@@ -41,7 +44,7 @@ export default function Outfits() {
         setLoading(true);
         try {
             // Ideally pass context here
-            const results = await StylistService.generateOutfits(items as any, occasion);
+            const results = await StylistService.generateOutfits(items as any, occasion, timeOfDay);
             setOutfits(results);
         } catch (e) {
             console.error(e);
@@ -168,6 +171,24 @@ export default function Outfits() {
                         </div>
                     </div>
 
+                    <div>
+                        <label className="text-sm font-medium text-gray-700 block mb-2">Time of Day</label>
+                        <div className="flex flex-wrap gap-2">
+                            {TIMES.map(t => (
+                                <button
+                                    key={t}
+                                    onClick={() => setTimeOfDay(t)}
+                                    className={`px-4 py-2 rounded-full border text-sm transition-all ${timeOfDay === t
+                                        ? 'border-black bg-black text-white font-medium'
+                                        : 'border-gray-100 hover:border-gray-200 text-gray-600'
+                                        }`}
+                                >
+                                    {t}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
                     {/* Upcoming Looks Section */}
                     {plannedOutfits.length > 0 && (
                         <div className="pt-6 border-t border-gray-100">
@@ -210,16 +231,7 @@ export default function Outfits() {
     }
 
     if (loading) {
-        return (
-            <div className="h-full flex flex-col items-center justify-center p-6 text-center space-y-4">
-                <div className="relative">
-                    <div className="absolute inset-0 bg-black blur-xl opacity-10 animate-pulse rounded-full" />
-                    <Sparkles className="w-12 h-12 text-black animate-spin relative z-10" />
-                </div>
-                <h2 className="text-xl font-semibold">Designing your look...</h2>
-                <p className="text-gray-500">Choosing items for {occasion} ({weather})</p>
-            </div>
-        );
+        return <OutfitAssemblyLoader items={items} occasion={occasion} />;
     }
 
     if (!currentCard) {
@@ -263,7 +275,7 @@ export default function Outfits() {
                     <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                         For {occasion} <Sparkles className="w-4 h-4 text-black" />
                     </h1>
-                    <p className="text-gray-500 text-xs">{weather} • {items.length} Items</p>
+                    <p className="text-gray-500 text-xs">{timeOfDay} • {weather} • {items.length} Items</p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => setStep('setup')}>
                     Change

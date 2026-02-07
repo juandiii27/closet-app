@@ -15,7 +15,13 @@ export const StyleMemory = {
      * In a real app, this would use AI Vision. Here, we use a smart keyword heuristic.
      */
     analyzeItem(item: ClosetItem): StyleProfile {
-        const text = ((item.image || '') + ' ' + (item.category || '')).toLowerCase();
+        const text = ([
+            item.image || '',
+            item.category || '',
+            item.subCategory || '',
+            item.formalitySignal || '',
+            item.primaryColor || ''
+        ]).join(' ').toLowerCase();
         const isUserUpload = item.image.includes('supabase') || item.image.includes('base64') || item.image.startsWith('blob:') || item.image.includes('processed-image');
 
         // Default Profile
@@ -45,7 +51,7 @@ export const StyleMemory = {
                 // Standard detection: Not a formal item
                 (!isUserUpload && !checkKeywords(text, ['polo', 'knit', 'sweater', 'button', 'collar', 'oxford', 'linen'])) ||
                 // Upload detection: MUST have explicit tee keywords to be a tee
-                (isUserUpload && checkKeywords(text, ['t-shirt', 'tee', 'tank', 'graphic']))
+                (isUserUpload && checkKeywords(text, ['t-shirt', 'tee', 'tank', 'graphic', 'tshirt']))
             );
 
 
@@ -64,7 +70,8 @@ export const StyleMemory = {
         const hasAthleticKeywords =
             checkKeywords(text, [
                 'tech', 'track', 'running', 'gym', 'athletic', 'mesh',
-                'dry-fit', 'performance', 'active', 'sweat', 'jogger', 'hoodie'
+                'dry-fit', 'performance', 'active', 'sweat', 'jogger', 'hoodie',
+                'short' // Allow generic shorts to be considered athletic candidates
             ]) || isAthleticShort;
 
         // AMBIGUITY CLAUSE — USER UPLOAD WILDCARD
@@ -132,7 +139,8 @@ export const StyleMemory = {
         }
 
         // SMART CASUAL / OLD MONEY (Formality 7-8)
-        if (checkKeywords(text, ['linen', 'chino', 'beige', 'khaki', 'knit', 'sweater', 'button', 'collar', 'oxford', 'loafer', 'boat'])) {
+        if (checkKeywords(text, ['linen', 'chino', 'beige', 'khaki', 'knit', 'sweater', 'button', 'collar', 'oxford', 'loafer', 'boat']) ||
+            (checkKeywords(text, ['pant', 'bottom']) && checkKeywords(text, ['tan', 'cream', 'white', 'grey', 'gray', 'black']) && !checkKeywords(text, ['sweat', 'jog', 'track']))) {
             profile.formality = 7;
             profile.vibes = ['Old Money', 'Smart Casual'];
         }
@@ -175,25 +183,46 @@ export const StyleMemory = {
      */
     isCompatible(item: ClosetItem, occasion: string): boolean {
         const profile = StyleMemory.analyzeItem(item);
-        const text = ((item.image || '') + ' ' + (item.category || '')).toLowerCase();
+        const text = ([
+            item.image || '',
+            item.category || '',
+            item.subCategory || '',
+            item.formalitySignal || '',
+            item.primaryColor || ''
+        ]).join(' ').toLowerCase();
+
+        // DEBUG: Log everything for Analysis
+        // console.log(`[StyleMemory] ${occasion} check: ${item.id.substring(0,4)} | Cat:${item.category} | Vibes:${profile.vibes.join(',')} | Sub:${item.subCategory}`);
 
         // 🇩🇴 DOMINICAN REPUBLIC STYLE RULES (Vibe-Based)
         switch (occasion) {
             case 'Sport':
             case 'Athleisure':
-                if ((profile as any).isAmbiguous) return true;
-                // 🇩🇴 SPORT RULES: Pure function.
-                // MUST have Sporty vibe.
-                // ABSOLUTELY NO Dress Pants/Jeans
-                if (checkKeywords(text, ['pant', 'trouser', 'jeans', 'legging', 'chino', 'slack'])) return false;
-                // ABSOLUTELY NO: Business, Formal, Old Money (Polos/Chinos are detected as these).
+                // 🇩🇴 SPORT RULES: Strict
+
+                // 1. Explicit Bans (Keywords)
+                if (checkKeywords(text, ['pant', 'trouser', 'jeans', 'legging', 'chino', 'slack', 'dress shirt', 'button', 'polo'])) return false;
+
+                // 2. Explicit Bans (Vibes)
+                // Polos/Chinos logic (usually detected as Old Money/Business)
                 if (profile.vibes.includes('Business') || profile.vibes.includes('Formal') || profile.vibes.includes('Old Money')) {
                     return false;
                 }
-                return profile.vibes.includes('Sporty');
+
+                // 3. Acceptance Criteria
+                return (
+                    profile.vibes.includes('Sporty') ||
+                    // Allow T-Shirts (Casual) but BAN "Mystery Items" (Ambiguous)
+                    // This prevents "Mystery Polos" from sneaking in as Casual.
+                    (profile.vibes.includes('Casual') && !(profile as any).isAmbiguous)
+                );
 
             case 'Dinner':
             case 'Old Money':
+                // 🇩🇴 DINNER RULES: Elegant.
+                // explicitly BAN casual items even if they look "nice"
+                if (checkKeywords(text, ['t-shirt', 'tee', 'tank', 'graphic', 'short', 'gym', 'tshirt'])) return false;
+
                 if (
                     profile.vibes.includes('Sporty') ||
                     profile.vibes.includes('Streetwear') ||

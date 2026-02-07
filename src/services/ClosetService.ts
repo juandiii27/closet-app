@@ -10,9 +10,20 @@ export interface ClosetItem {
     gender: Gender;
     user_id: string;
     created_at: string;
+
+    // AI Metadata (Optional)
+    subCategory?: string;
+    primaryColor?: string;
+    secondaryColors?: string[];
+    formalitySignal?: string;
+    fabricAppearance?: string;
+    fitAppearance?: string;
+    patterns?: string;
+
+    brand?: string;
 }
 
-const LOCAL_STORAGE_KEY = 'closet-items';
+const LOCAL_STORAGE_KEY = 'closet-items-v2';
 
 export const ClosetService = {
     async getItems(userId: string): Promise<ClosetItem[]> {
@@ -91,11 +102,73 @@ export const ClosetService = {
 
         // Mock Response: A curated "public" closet
         return [
-            { id: '1', image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&q=80&w=500', category: 'Tops', gender: 'Unisex', user_id: userId, created_at: new Date().toISOString() },
-            { id: '2', image: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&q=80&w=500', category: 'Bottoms', gender: 'Unisex', user_id: userId, created_at: new Date().toISOString() },
-            { id: '3', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=500', category: 'Shoes', gender: 'Unisex', user_id: userId, created_at: new Date().toISOString() },
-            { id: '4', image: 'https://images.unsplash.com/photo-1576186726580-a816e8b12896?auto=format&fit=crop&q=80&w=500', category: 'Accessories', gender: 'Unisex', user_id: userId, created_at: new Date().toISOString() },
-            { id: '5', image: 'https://images.unsplash.com/photo-1551028919-ac6635f0e5c9?auto=format&fit=crop&q=80&w=500', category: 'Tops', gender: 'Womens', user_id: userId, created_at: new Date().toISOString() },
+            {
+                id: '1',
+                image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&q=80&w=500',
+                category: 'Tops',
+                gender: 'Unisex',
+                user_id: userId,
+                created_at: new Date().toISOString(),
+                subCategory: 'Dress Shirt',
+                formalitySignal: 'Formal',
+                primaryColor: 'White'
+            },
+            {
+                id: '2',
+                image: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&q=80&w=500',
+                category: 'Bottoms',
+                gender: 'Unisex',
+                user_id: userId,
+                created_at: new Date().toISOString(),
+                subCategory: 'Chinos',
+                formalitySignal: 'Smart Casual',
+                primaryColor: 'Beige'
+            },
+            {
+                id: '3',
+                image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=500',
+                category: 'Shoes',
+                gender: 'Unisex',
+                user_id: userId,
+                created_at: new Date().toISOString(),
+                subCategory: 'Sneakers',
+                formalitySignal: 'Casual',
+                primaryColor: 'White'
+            },
+            {
+                id: '4',
+                image: 'https://images.unsplash.com/photo-1576186726580-a816e8b12896?auto=format&fit=crop&q=80&w=500',
+                category: 'Accessories',
+                gender: 'Unisex',
+                user_id: userId,
+                created_at: new Date().toISOString(),
+                subCategory: 'Watch',
+                formalitySignal: 'Smart Casual',
+                primaryColor: 'Silver'
+            },
+            {
+                id: '5',
+                image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=500',
+                category: 'Tops',
+                gender: 'Unisex',
+                user_id: userId,
+                created_at: new Date().toISOString(),
+                subCategory: 'T-Shirt',
+                formalitySignal: 'Casual',
+                primaryColor: 'White'
+            },
+            {
+                id: '6',
+                // Changed to actual shorts image
+                image: 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&q=80&w=500',
+                category: 'Bottoms',
+                gender: 'Unisex',
+                user_id: userId,
+                created_at: new Date().toISOString(),
+                subCategory: 'Athletic Shorts',
+                formalitySignal: 'Casual',
+                primaryColor: 'Black'
+            },
         ];
     }
 };

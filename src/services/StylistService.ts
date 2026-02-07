@@ -1,6 +1,8 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { ClosetItem } from './ClosetService';
 import { StyleMemory } from './StyleMemory';
 import { StyleReferenceService } from './StyleReference';
+import { buildStylistPrompt, type StyleKey } from '../prompts/StylistPrompts';
 
 export interface Outfit {
     id: string;
@@ -12,108 +14,212 @@ export interface Outfit {
     missingCategoryWarning?: string;
 }
 
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 export const StylistService = {
     // Map Occasions to specific "Styles" or "Vibes"
-    getStyleForOccasion(occasion: string): string {
-        const STYLE_RULES: Record<string, string> = {
-            'Casual': 'Streetwear & Comfort',
-            'Work': 'Business Casual',
-            'Party': 'Glam & Chic',
-            'Date': 'Romantic & Elegant',
-            'Dinner': 'Old Money',
-            'Sport': 'Athleisure'
+    getStyleKeyForOccasion(occasion: string): StyleKey {
+        const STYLE_MAP: Record<string, StyleKey> = {
+            'Casual': 'plain_casual',
+            'Work': 'minimalist',
+            'Party': 'streetwear', // Or maybe minimalist depending on party type, sticking to streetwear for expression
+            'Date': 'old_money_casual',
+            'Dinner': 'old_money',
+            'Sport': 'athleisure'
         };
-        return STYLE_RULES[occasion] || 'Smart Casual';
+        return STYLE_MAP[occasion] || 'plain_casual';
     },
 
-    async generateOutfits(items: ClosetItem[], occasion: string = 'Casual'): Promise<Outfit[]> {
-        const styleTheme = StylistService.getStyleForOccasion(occasion);
-        console.log(`Generating outfits for ${occasion} (Theme: ${styleTheme})`);
+    getStyleForOccasion(occasion: string): string {
+        // Keep legacy text helper for now or update if needed, mostly used for logging/titles
+        return this.getStyleKeyForOccasion(occasion).replace('_', ' ').toUpperCase();
+    },
 
-        if (!OPENAI_API_KEY) {
-            console.log('Mock Mode: Generating Outfits (Tiered Strategy)');
-            if (items.length === 0) return [];
+    async generateOutfits(items: ClosetItem[], occasion: string = 'Casual', timeOfDay: string = 'Day'): Promise<Outfit[]> {
+        const styleKey = StylistService.getStyleKeyForOccasion(occasion);
+        console.log(`Generating outfits for ${occasion} (${timeOfDay}) (Style: ${styleKey})`);
 
-            const outfits: Outfit[] = [];
+        // --- AI MODE (GEMINI) ---
+        if (GEMINI_API_KEY && items.length > 0) {
+            try {
+                const prompt = buildStylistPrompt(styleKey);
 
-            // --- TIER 1: STRICT VISUAL MOODBOARDS ---
-            // Tries to create "Pinterest Perfect" looks
-            const moodboards = StyleReferenceService.getMoodboardsForOccasion(occasion);
-            const shuffledBoards = moodboards.sort(() => 0.5 - Math.random());
+                // Structured Payload
+                const garmentsPayload = items.map(item => ({
+                    id: item.id,
+                    category: item.category,
+                    subCategory: item.subCategory,
+                    primaryColor: item.primaryColor,
+                    secondaryColors: item.secondaryColors,
+                    formalitySignal: item.formalitySignal,
+                    fabricAppearance: item.fabricAppearance,
+                    fitAppearance: item.fitAppearance,
+                    patterns: item.patterns,
+                    userOwned: item.image?.includes('supabase') || item.image?.startsWith('blob:')
+                }));
 
-            for (const board of shuffledBoards) {
-                if (outfits.length >= 3) break; // Limit strict ones
+                const userMessage = `
+                CONTEXT:
+                Occasion: ${occasion}
+                Time of Day: ${timeOfDay} (Adjust vibe: Morning=Fresh, Noon=Bright, Night=Sleek/Darker)
 
-                const boardCandidates = items.filter(item => {
-                    // 1. Is it allowed? (The Logic)
-                    const compatible = StyleMemory.isCompatible(item, occasion);
-                    // 2. Does it fit the visual theme? (The Vibe)
-                    // Note: User Uploads score 100 here via StyleReference updates
-                    const visualScore = StyleReferenceService.matchesMoodboard(item, board);
-                    return compatible && visualScore > 0;
+                GARMENTS:
+                ${JSON.stringify(garmentsPayload, null, 2)}
+                
+                Generate 3 distinct outfits for this style.
+                `;
+
+                // DEV LOGGING
+                console.debug('[Stylist Prompt]', prompt);
+                console.debug('[Garments Payload]', garmentsPayload);
+
+                const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+                const model = genAI.getGenerativeModel({
+                    model: "gemini-2.5-flash-lite",
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        temperature: 0.2
+                    }
                 });
 
-                const generated = generateFromPool(boardCandidates, board.name, board.description, occasion);
+                const result = await model.generateContent([prompt, userMessage]);
+                const response = await result.response;
+                let resultText = response.text();
 
-                // CRITICAL: Tier 1 (Moodboards) should only show COMPLETE fits.
-                // If the board doesn't have enough pieces to make a full Top + Bottom look, skip it.
-                // This prevents "Sneaker only" Stealth Tech outfits.
-                const completeFits = generated.filter(g => g.items.some(i => i.category === 'Tops') && g.items.some(i => i.category === 'Bottoms'));
+                // Cleanup Markdown if present (Gemini Pro legacy often adds it)
+                resultText = resultText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
 
-                outfits.push(...completeFits);
-            }
+                console.debug('[Gemini Response]', resultText);
 
-            // --- TIER 2: LOGIC ONLY (The "Safe" Zone) ---
-            // If Tier 1 didn't fill the deck (e.g. strict visuals failed), use just the StyleMemory logic.
-            // Tier 2 should ALSO focus on COMPLETE outfits to provide quality over partials.
-            if (outfits.length < 5) {
-                console.log('Tier 2: Fallback to StyleMemory Logic (Complete Fit Priority)');
-                const logicCandidates = items.filter(item => StyleMemory.isCompatible(item, occasion));
+                const resultJson = JSON.parse(resultText);
 
-                const generated = generateFromPool(logicCandidates, `${occasion} Essential`, `${styleTheme}`, occasion);
+                // Validation Schema (Basic)
+                if (!resultJson.outfits || !Array.isArray(resultJson.outfits)) {
+                    throw new Error('Invalid AI response shape: missing outfits array');
+                }
 
-                // Only take complete fits from Tier 2 to prioritize quality.
-                const completeFits = generated.filter(g => g.items.some(i => i.category === 'Tops') && g.items.some(i => i.category === 'Bottoms'));
+                const aiOutfits: Outfit[] = [];
 
-                // Filter out duplicates
-                for (const fit of completeFits) {
-                    const id = fit.items.map(k => k.id).sort().join('-');
-                    if (!outfits.some(o => o.items.map(m => m.id).sort().join('-') === id)) {
-                        outfits.push(fit);
+                for (const fit of resultJson.outfits) {
+                    // fit should have { baseTop, layer, bottom, shoes, accessories, warning } (IDs)
+                    const outfitItems: ClosetItem[] = [];
+
+                    // Helper to find item by ID
+                    const findItem = (id: string) => items.find(i => i.id === id);
+
+                    if (fit.baseTop) { const i = findItem(fit.baseTop); if (i) outfitItems.push(i); }
+                    if (fit.layer) { const i = findItem(fit.layer); if (i) outfitItems.push(i); }
+                    if (fit.bottom) { const i = findItem(fit.bottom); if (i) outfitItems.push(i); }
+                    if (fit.shoes) { const i = findItem(fit.shoes); if (i) outfitItems.push(i); }
+                    if (Array.isArray(fit.accessories)) {
+                        fit.accessories.forEach((accId: string) => {
+                            const i = findItem(accId);
+                            if (i) outfitItems.push(i);
+                        });
+                    }
+
+                    if (outfitItems.length > 0) {
+                        aiOutfits.push({
+                            id: crypto.randomUUID(),
+                            items: outfitItems,
+                            title: fit.warning ? `Partial Look (${styleKey})` : `AI Curated: ${styleKey}`,
+                            score: 1.0, // AI is confident
+                            styleTag: styleKey,
+                            missingCategoryWarning: fit.warning
+                        });
                     }
                 }
-            }
 
-            // --- TIER 3: EMERGENCY FALLBACK / PARTIALS (Graceful Degradation) ---
-            // This is the ONLY place where partial outfits are allowed, and only if we still have nothing.
-            if (outfits.length === 0) {
-                console.log('Tier 3: Graceful Degradation (Allowing Partials)');
-
-                // Disable fallback for Formal if NO items match at all (preventing sheer randomness)
-                const filteredPool = items.filter(item => StyleMemory.isCompatible(item, occasion));
-
-                if (filteredPool.length === 0 && ['Dinner', 'Date', 'Work'].includes(occasion)) {
-                    console.log(`No compatible items at all for formal occasion: ${occasion}`);
-                    return [];
+                if (aiOutfits.length > 0) {
+                    return aiOutfits;
                 }
+                console.warn("AI returned valid JSON but no valid outfits (ids likely mismatch). Falling back to mock.");
 
-                // Generate from compatible pool, letting generateFromPool handle partials.
-                const generated = generateFromPool(filteredPool, `${occasion} Essential`, 'Partial fallback', occasion);
-
-                generated.forEach(g => {
-                    g.isFallback = true;
-                    // Note: generateFromPool already sets the specific missingCategoryWarning
-                });
-
-                outfits.push(...generated);
+            } catch (error) {
+                console.error("AI Stylist Failed (Falling back to mock):", error);
+                // Fallthrough to mock logic
             }
-
-            return outfits.sort((a, b) => (b.score || 0) - (a.score || 0));
         }
 
-        throw new Error("AI Stylist not fully implemented yet");
+        // --- MOCK / FALLBACK MODE ---
+        console.log('Mock Mode: Generating Outfits (Tiered Strategy)');
+        if (items.length === 0) return [];
+
+        const outfits: Outfit[] = [];
+
+        // --- TIER 1: STRICT VISUAL MOODBOARDS ---
+        // Tries to create "Pinterest Perfect" looks
+        const moodboards = StyleReferenceService.getMoodboardsForOccasion(occasion);
+        const shuffledBoards = moodboards.sort(() => 0.5 - Math.random());
+
+        for (const board of shuffledBoards) {
+            if (outfits.length >= 3) break; // Limit strict ones
+
+            const boardCandidates = items.filter(item => {
+                // 1. Is it allowed? (The Logic)
+                const compatible = StyleMemory.isCompatible(item, occasion);
+                // 2. Does it fit the visual theme? (The Vibe)
+                // Note: User Uploads score 100 here via StyleReference updates
+                const visualScore = StyleReferenceService.matchesMoodboard(item, board);
+                return compatible && visualScore > 0;
+            });
+
+            const generated = generateFromPool(boardCandidates, board.name, board.description, occasion);
+
+            // CRITICAL: Tier 1 (Moodboards) should only show COMPLETE fits.
+            // If the board doesn't have enough pieces to make a full Top + Bottom look, skip it.
+            // This prevents "Sneaker only" Stealth Tech outfits.
+            const completeFits = generated.filter(g => g.items.some(i => i.category === 'Tops') && g.items.some(i => i.category === 'Bottoms'));
+
+            outfits.push(...completeFits);
+        }
+
+        // --- TIER 2: LOGIC ONLY (The "Safe" Zone) ---
+        // If Tier 1 didn't fill the deck (e.g. strict visuals failed), use just the StyleMemory logic.
+        // Tier 2 should ALSO focus on COMPLETE outfits to provide quality over partials.
+        if (outfits.length < 5) {
+            console.log('Tier 2: Fallback to StyleMemory Logic (Complete Fit Priority)');
+            const logicCandidates = items.filter(item => StyleMemory.isCompatible(item, occasion));
+
+            const generated = generateFromPool(logicCandidates, `${occasion} Essential`, `${styleKey}`, occasion);
+
+            // Only take complete fits from Tier 2 to prioritize quality.
+            const completeFits = generated.filter(g => g.items.some(i => i.category === 'Tops') && g.items.some(i => i.category === 'Bottoms'));
+
+            // Filter out duplicates
+            for (const fit of completeFits) {
+                const id = fit.items.map(k => k.id).sort().join('-');
+                if (!outfits.some(o => o.items.map(m => m.id).sort().join('-') === id)) {
+                    outfits.push(fit);
+                }
+            }
+        }
+
+        // --- TIER 3: EMERGENCY FALLBACK / PARTIALS (Graceful Degradation) ---
+        // This is the ONLY place where partial outfits are allowed, and only if we still have nothing.
+        if (outfits.length === 0) {
+            console.log('Tier 3: Graceful Degradation (Allowing Partials)');
+
+            // Disable fallback for Formal if NO items match at all (preventing sheer randomness)
+            const filteredPool = items.filter(item => StyleMemory.isCompatible(item, occasion));
+
+            if (filteredPool.length === 0 && ['Dinner', 'Date', 'Work'].includes(occasion)) {
+                console.log(`No compatible items at all for formal occasion: ${occasion}`);
+                return [];
+            }
+
+            // Generate from compatible pool, letting generateFromPool handle partials.
+            const generated = generateFromPool(filteredPool, `${occasion} Essential`, 'Partial fallback', occasion);
+
+            generated.forEach(g => {
+                g.isFallback = true;
+                // Note: generateFromPool already sets the specific missingCategoryWarning
+            });
+
+            outfits.push(...generated);
+        }
+
+        return outfits.sort((a, b) => (b.score || 0) - (a.score || 0));
     },
 
     savePlannedOutfit(outfit: Outfit, date: string): void {
