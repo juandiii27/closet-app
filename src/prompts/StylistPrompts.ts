@@ -32,36 +32,100 @@ Assign:
 If a complete outfit is not possible, explain clearly why in a "warning" field.`;
 
 export const STYLE_DEFINITIONS: Record<StyleKey, string> = {
-    old_money: `1️⃣ OLD MONEY (Classic / Quiet Luxury)
-Vibe: timeless, understated, inherited wealth
-Keywords: tailored, neutral, refined
+    old_money: `1️⃣ OLD MONEY 🏛️ (Classic / Quiet Luxury)
+Vibe: timeless, understated, inherited wealth, "if you know, you know"
+Keywords: tailored, neutral, refined, academic, heritage
 
-Colors: Navy, cream, white, beige, camel, olive, brown, charcoal
-Max 3 colors, low contrast
+🎨 CORE COLOR PALETTE (Neutrals - Foundation):
+- White / Off-white / Cream
+- Beige / Stone / Sand
+- Navy
+- Gray (light → charcoal)
+- Brown (light tan → dark chocolate)
 
-Tops: Polo shirts, Oxford / dress shirts, Fine knit sweaters, Cardigans
-❌ No hoodies, graphics, oversized fits
+🎨 ACCENT COLORS (Use sparingly - Max 1 per outfit):
+- Olive green
+- Forest green
+- Burgundy / Wine
+- Light blue
+- Soft pastel pink
+- Muted yellow
 
-Bottoms: Chinos, Tailored trousers
-❌ No shorts, cargos, distressed denim
+⚠️ COLOR RULES:
+1. Light top → darker bottom (Primary rule)
+2. Warm colors (beige, brown, olive) → brown shoes
+3. Cool colors (navy, gray) → black or dark brown shoes
+4. Never more than 3 colors total
+5. Accessories should echo a color already in the outfit
+6. Belt = same color as shoes
 
-Shoes: Loafers, Leather sneakers, Derbies
+👔 TOPS:
+- Cotton mesh / Piqué polo shirts
+- Long-sleeve polo shirts
+- Oxford Cloth Button Down (OCBD)
+- Knit Sweaters (Cable knit, V-Neck, Quarter-Zip)
+- Turtleneck Sweaters
+- Linen Shirts (High quality)
+- Elegant Short Sleeve Shirts
+❌ NO: Hoodies, Graphics, Logos, Polyester shine, Oversized streetwear fits
 
-Accessories: Watch, Belt, Sunglasses`,
+👖 BOTTOMS:
+- Chinos (Beige, Navy, Olive, Stone)
+- Tailored Wool Trousers (Gray, Charcoal, Navy)
+- Linen Trousers (Cream, White, Sand)
+- Corduroy Pants (Earth tones)
+- Slacks
+❌ NO: Cargo pants, Distressed denim, Athletic shorts, Sweatpants
 
-    old_money_casual: `2️⃣ OLD MONEY CASUAL
-Vibe: relaxed wealth, weekend Europe
-Keywords: effortless, polished but not formal
+sz SHOES:
+- Loafers (Penny, Tassel, Horsebit) - Brown/Tan usually best
+- Derbies
+- Boat Shoes
+- Leather Sneakers (Minimal, e.g., Common Projects, Golden Goose - clean)
+- Wingtips
+❌ NO: Running shoes, Chunky sneakers, Neon slides
 
-Colors: Same as Old Money, slightly lighter (cream, olive, soft navy)
+⌚ ACCESSORIES:
+- Watch: Analog only (Leather strap matches belt/shoes, Metal matches outfit tone)
+    - Warm outfit → Gold metal
+    - Cool outfit → Silver metal
+- Sunglasses: Tortoiseshell (Superior) > Black
+- Belt: Leather, matches shoes exactly
 
-Tops: Knit polos, Casual button-downs, Lightweight sweaters
+❌ OLD MONEY KILLERS:
+- Neon colors
+- Bright red
+- Loud patterns
+- Too much black in day/hot weather
+- More than 3 colors`,
 
-Bottoms: Relaxed chinos, Clean straight-leg trousers
+    old_money_casual: `2️⃣ OLD MONEY CASUAL (Weekend / Resort / Club)
+Vibe: relaxed wealth, European summer, country club weekend
+Keywords: effortless, polished, breathable, rich vacation
 
-Shoes: Suede loafers, Minimal leather sneakers
+🎨 PALETTE: Same as Core Old Money, but leaner towards lighter tones (Cream, White, Light Blue, Sand).
 
-Accessories: Watch, Sunglasses, Optional cap (very understated)`,
+👔 TOPS:
+- Linen shirts (rolled sleeves)
+- Knit polos (silk/cotton blend look)
+- High-quality plain tees (under open shirts only)
+- Lightweight Quarter-zips
+
+👖 BOTTOMS:
+- Tailored shorts (Chino/Linen - above knee)
+- Linen trousers (drawstring allowed if high quality)
+- Lighter wash jeans (rare, but allowed if classic cut)
+
+sz SHOES:
+- Suede Loafers (Tan, Light Brown)
+- Boat Shoes
+- Espadrilles
+- Minimal Leather Sneakers
+
+⌚ ACCESSORIES:
+- Canvas/Leather belts
+- Panama hats (if applicable)
+- Less structured than formal Old Money`,
 
     athleisure: `3️⃣ ATHLEISURE / SPORT WEAR
     Vibe: clean, athletic, modern, functional

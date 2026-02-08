@@ -26,17 +26,19 @@ export const StyleReferenceService = {
         const boards: Moodboard[] = [];
 
         // 1. DINNER / OLD MONEY BOARDS
-        if (['Dinner', 'Date', 'Old Money'].includes(occasion)) {
+        if (['Dinner', 'Date', 'Old Money', 'Cena'].includes(occasion)) {
+            // General Old Money Aesthetic (Mediterranean / Light)
             boards.push({
                 id: 'om-riviera',
                 name: 'Riviera Evening',
-                description: 'Mediterranean luxury. Navy, White, Beige. Linen textues.',
+                description: 'Mediterranean luxury. Navy, White, Beige. Linen textures.',
                 styleCategory: 'Old Money',
                 colors: ['navy', 'white', 'cream', 'beige', 'blue', 'brown'],
                 fabrics: ['linen', 'cotton'],
                 requiredItems: ['shirt', 'polo', 'chino', 'loafer'],
                 bannedItems: ['hoodie', 'sneaker', 'graphic', 'nylon', 't-shirt', 'performance', 'short']
             });
+            // General Old Money Aesthetic (Urban / Dark)
             boards.push({
                 id: 'om-city',
                 name: 'City Gentleman',
@@ -49,8 +51,25 @@ export const StyleReferenceService = {
             });
         }
 
+        // 1.5 RESORT / VACATION BOARDS (Playa / Piscina)
+        // These are distinct enough from Dinner to warrant their own check or subgroup, 
+        // but for now they fit "Old Money Casual" perfectly. 
+        // We'll prioritize the Lighter Riviera board for them.
+        if (['Playa', 'Piscina'].includes(occasion)) {
+            boards.push({
+                id: 'om-riviera',
+                name: 'Riviera Day / Resort',
+                description: 'Poolside luxury. Linen, Swim, Cream, White.',
+                styleCategory: 'Old Money',
+                colors: ['white', 'cream', 'beige', 'blue', 'tan'],
+                fabrics: ['linen', 'cotton', 'swim'],
+                requiredItems: ['shirt', 'short', 'loafer', 'espadrille', 'sandal'],
+                bannedItems: ['hoodie', 'jeans', 'boot', 'blazer', 'wool']
+            });
+        }
+
         // 2. SPORT / ATHLEISURE BOARDS
-        if (['Sport', 'Athleisure'].includes(occasion)) {
+        if (['Sport', 'Athleisure', 'Ejercicio'].includes(occasion)) {
             boards.push({
                 id: 'sport-stealth',
                 name: 'Stealth Tech',
@@ -74,7 +93,7 @@ export const StyleReferenceService = {
         }
 
         // 3. CASUAL / STREETWEAR
-        if (['Casual', 'Streetwear'].includes(occasion)) {
+        if (['Casual', 'Streetwear', 'Coro', 'Party'].includes(occasion)) {
             boards.push({
                 id: 'street-essentials',
                 name: 'Modern Essentials',

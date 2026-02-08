@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Shirt, Plus, Sparkles, Map, ShoppingBag } from 'lucide-react';
+import { Shirt, Plus, Sparkles, ShoppingBag } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'framer-motion';
 
@@ -12,18 +12,22 @@ export function Layout() {
         { icon: Shirt, label: 'Closet', path: '/' },
         { icon: Sparkles, label: 'Outfits', path: '/outfits' },
         { icon: Plus, label: 'Upload', path: '/upload', isPrimary: true },
-        { icon: Map, label: 'Map', path: '/map' },
         { icon: ShoppingBag, label: 'Shop', path: '/shop' },
+        { icon: Shirt, label: '', path: '', isSpacer: true }, // Dummy item to balance the grid
     ];
 
     return (
-        <div className="min-h-screen bg-gray-50 font-sans mx-auto max-w-md relative shadow-2xl overflow-hidden flex flex-col">
+        <div className="min-h-screen bg-gray-50 dark:bg-black font-sans mx-auto max-w-md relative shadow-2xl overflow-hidden flex flex-col transition-colors duration-300">
             <main className="flex-1 overflow-y-auto no-scrollbar pb-20">
                 <Outlet />
             </main>
 
-            <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-2 flex justify-between items-center z-50 max-w-md mx-auto">
-                {navItems.map((item) => {
+            <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-black border-t border-gray-100 dark:border-zinc-800 px-2 py-2 grid grid-cols-5 justify-items-center items-center z-50 max-w-md mx-auto transition-colors duration-300">
+                {navItems.map((item, idx) => {
+                    if (item.isSpacer) {
+                        return <div key={`spacer-${idx}`} className="w-full" />;
+                    }
+
                     const isActive = pathname === item.path;
                     const Icon = item.icon;
 
@@ -33,9 +37,9 @@ export function Layout() {
                                 <div className="relative -top-5">
                                     <motion.div
                                         whileTap={{ scale: 0.9 }}
-                                        className="w-16 h-16 bg-black rounded-full flex items-center justify-center shadow-lg shadow-gray-200 border-4 border-gray-50"
+                                        className="w-16 h-16 bg-black dark:bg-white rounded-full flex items-center justify-center shadow-lg shadow-gray-200 dark:shadow-zinc-900 border-4 border-gray-50 dark:border-black transition-colors duration-300"
                                     >
-                                        <Icon className="text-white w-8 h-8" />
+                                        <Icon className="text-white dark:text-black w-8 h-8" />
                                     </motion.div>
                                 </div>
                             </Link>
@@ -47,8 +51,8 @@ export function Layout() {
                             key={item.path}
                             to={item.path}
                             className={cn(
-                                "flex flex-col items-center gap-1 p-2 transition-colors",
-                                isActive ? "text-black" : "text-gray-400 hover:text-gray-600"
+                                "flex flex-col items-center gap-1 p-2 transition-colors duration-300",
+                                isActive ? "text-black dark:text-white" : "text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400"
                             )}
                         >
                             <Icon className={cn("w-6 h-6", isActive && "fill-current")} />

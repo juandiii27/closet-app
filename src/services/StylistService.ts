@@ -20,12 +20,12 @@ export const StylistService = {
     // Map Occasions to specific "Styles" or "Vibes"
     getStyleKeyForOccasion(occasion: string): StyleKey {
         const STYLE_MAP: Record<string, StyleKey> = {
-            'Casual': 'plain_casual',
-            'Work': 'minimalist',
-            'Party': 'streetwear', // Or maybe minimalist depending on party type, sticking to streetwear for expression
-            'Date': 'old_money_casual',
-            'Dinner': 'old_money',
-            'Sport': 'athleisure'
+            'Coro': 'plain_casual',
+            'Cena': 'old_money',
+            'Party': 'streetwear',
+            'Playa': 'old_money_casual',
+            'Piscina': 'old_money_casual',
+            'Ejercicio': 'athleisure'
         };
         return STYLE_MAP[occasion] || 'plain_casual';
     },

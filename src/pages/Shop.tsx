@@ -3,7 +3,7 @@ import { ShoppingService, type Recommendation } from '../services/ShoppingServic
 import { useCloset } from '../context/ClosetContext';
 import { useAuth } from '../context/AuthContext';
 import { MapPin } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+
 import { motion } from 'framer-motion';
 
 export default function Shop() {
@@ -11,8 +11,6 @@ export default function Shop() {
     const { profile } = useAuth(); // Get user profile
     const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
-
     useEffect(() => {
         // Pass style preferences
         ShoppingService.getRecommendations(items, profile?.stylePreferences).then(data => {
@@ -20,11 +18,6 @@ export default function Shop() {
             setLoading(false);
         });
     }, [items, profile?.stylePreferences]); // Re-run when profile styles change
-
-    const handleLocateStore = (_storeId: string) => {
-        // In the future, we could pass state to center the map on this store
-        navigate('/map');
-    };
 
     if (loading) {
         return (
@@ -78,13 +71,10 @@ export default function Shop() {
                                 <div className="text-[10px] uppercase tracking-widest text-gray-400">
                                     Why: {item.reason}
                                 </div>
-                                <button
-                                    onClick={() => handleLocateStore(item.storeId)}
-                                    className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black hover:underline"
-                                >
+                                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-500">
                                     <MapPin className="w-3 h-3" />
                                     <span>{item.storeName}</span>
-                                </button>
+                                </div>
                             </div>
                         </div>
                     </motion.div>

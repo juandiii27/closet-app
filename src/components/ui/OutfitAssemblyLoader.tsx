@@ -20,21 +20,21 @@ export function OutfitAssemblyLoader({ items, occasion }: OutfitAssemblyLoaderPr
     const renderList = displayItems.length < 10 ? [...displayItems, ...displayItems] : displayItems;
 
     return (
-        <div className="min-h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-white relative">
+        <div className="min-h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-white dark:bg-black relative transition-colors duration-300">
 
             {/* Header Text */}
             <div className="absolute top-24 z-20 text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
                     <Sparkles className="w-6 h-6 text-purple-600 animate-pulse" />
-                    <h2 className="text-2xl font-bold text-gray-900">Styling for {occasion}</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Styling for {occasion}</h2>
                 </div>
                 <p className="text-gray-400 font-medium">Scanning your closet...</p>
             </div>
 
             {/* SINGLE BIG STREAM LAYER */}
             <div className="w-full h-[500px] flex items-center relative">
-                <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10" />
-                <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10" />
+                <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white dark:from-black to-transparent z-10 transition-colors duration-300" />
+                <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white dark:from-black to-transparent z-10 transition-colors duration-300" />
 
                 {renderList.length > 0 ? (
                     <motion.div
@@ -52,7 +52,7 @@ export function OutfitAssemblyLoader({ items, occasion }: OutfitAssemblyLoaderPr
                     </motion.div>
                 ) : (
                     // Fallback if truly 0 items exist
-                    <div className="w-full text-center text-gray-300">
+                    <div className="w-full text-center text-gray-300 dark:text-gray-600">
                         <p>No items found inside closet.</p>
                     </div>
                 )}
@@ -71,7 +71,7 @@ function ItemCard({ item }: { item: ClosetItem }) {
     const [error, setError] = useState(false);
 
     return (
-        <div className="w-[300px] h-[400px] flex-shrink-0 flex items-center justify-center relative bg-white rounded-3xl border border-gray-100 shadow-md p-8 overflow-hidden">
+        <div className="w-[300px] h-[400px] flex-shrink-0 flex items-center justify-center relative bg-white dark:bg-zinc-900 rounded-3xl border border-gray-100 dark:border-zinc-800 shadow-md p-8 overflow-hidden transition-colors duration-300">
             {!error ? (
                 <img
                     src={item.image}
@@ -80,7 +80,7 @@ function ItemCard({ item }: { item: ClosetItem }) {
                     onError={() => setError(true)}
                 />
             ) : (
-                <div className="flex flex-col items-center justify-center text-gray-300 opacity-50">
+                <div className="flex flex-col items-center justify-center text-gray-300 dark:text-gray-600 opacity-50">
                     <Shirt className="w-32 h-32 mb-4" />
                     <span className="text-sm font-medium uppercase tracking-widest">Image Unavailable</span>
                 </div>

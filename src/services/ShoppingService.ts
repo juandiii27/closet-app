@@ -1,4 +1,3 @@
-import { StoreService } from './StoreService';
 import { type ClosetItem } from './ClosetService'; // Import directly from service
 
 export interface Recommendation {
@@ -116,6 +115,14 @@ const MOCK_RECOMMENDATIONS = [
     }
 ];
 
+const MOCK_STORES = [
+    { id: '1', name: 'Zara' },
+    { id: '2', name: 'H&M' },
+    { id: '3', name: 'Urban Outfitters' },
+    { id: '4', name: 'Nordstrom' },
+    { id: '5', name: 'Vintage Boutique' }
+];
+
 export const ShoppingService = {
     getRecommendations: async (userCloset: ClosetItem[], userStyles: string[] = []): Promise<Recommendation[]> => {
         // Simulate network delay
@@ -146,12 +153,8 @@ export const ShoppingService = {
         // If we filtered everything, fall back to some defaults or show 'Trending'
         const finalRecs = personalizedRecs.length > 0 ? personalizedRecs : MOCK_RECOMMENDATIONS.slice(0, 2);
 
-        // Get stores to link to
-        const center = await StoreService.getUserLocation();
-        const stores = await StoreService.getNearbyStores(center.lat, center.lng);
-
         return finalRecs.map((rec, i) => {
-            const randomStore = stores[Math.floor(Math.random() * stores.length)];
+            const randomStore = MOCK_STORES[Math.floor(Math.random() * MOCK_STORES.length)];
 
             // Dynamic Reason
             let reason = rec.reason;

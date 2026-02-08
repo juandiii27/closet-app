@@ -1,23 +1,25 @@
 import { useAuth } from '../context/AuthContext';
-import { LogOut, User, ChevronLeft } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { LogOut, User, ChevronLeft, Moon, Sun } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { StyleSelector } from '../components/StyleSelector';
 
 export default function ProfileSettings() {
-    const { user, profile, signOut, updateProfile } = useAuth(); // Import profile
+    const { user, profile, signOut, updateProfile } = useAuth();
+    const { theme, setTheme } = useTheme();
 
     return (
-        <div className="min-h-screen bg-gray-50 text-black font-sans">
-            <header className="px-6 py-8 bg-white border-b border-gray-100 flex items-center gap-4 sticky top-0 z-10">
-                <Link to="/" className="p-2 -ml-2 text-gray-400 hover:text-black transition-colors">
+        <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 text-black dark:text-white font-sans transition-colors duration-300">
+            <header className="px-6 py-8 bg-white dark:bg-black border-b border-gray-100 dark:border-zinc-800 flex items-center gap-4 sticky top-0 z-10 transition-colors duration-300">
+                <Link to="/" className="p-2 -ml-2 text-gray-400 dark:text-gray-500 hover:text-black dark:hover:text-white transition-colors">
                     <ChevronLeft className="w-6 h-6" />
                 </Link>
-                <h1 className="text-xl font-serif font-bold">Profile & Settings</h1>
+                <h1 className="text-xl font-serif font-bold text-gray-900 dark:text-white">Profile & Settings</h1>
             </header>
 
             <div className="p-6">
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8 flex items-center gap-4">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 overflow-hidden border border-gray-200">
+                <div className="bg-white dark:bg-black rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800 mb-8 flex items-center gap-4 transition-colors duration-300">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-900 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500 overflow-hidden border border-gray-200 dark:border-zinc-800">
                         {profile?.avatarUrl ? (
                             <img src={profile.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
@@ -25,15 +27,42 @@ export default function ProfileSettings() {
                         )}
                     </div>
                     <div>
-                        <h2 className="font-bold text-lg text-gray-900">{profile?.gender ? (profile.gender === 'Mens' ? 'He/Him' : profile.gender === 'Womens' ? 'She/Her' : 'They/Them') : 'User'}</h2>
-                        <p className="text-gray-500 text-sm">{user?.email}</p>
+                        <h2 className="font-bold text-lg text-gray-900 dark:text-white">
+                            {profile?.gender ? (profile.gender === 'Mens' ? 'He/Him' : profile.gender === 'Womens' ? 'She/Her' : 'They/Them') : 'User'}
+                        </h2>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">{user?.email}</p>
                     </div>
                 </div>
 
                 <div className="space-y-8">
+                    {/* Appearance Section */}
+                    <div className="bg-white dark:bg-black rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800 transition-colors duration-300">
+                        <h3 className="font-serif font-bold text-lg text-gray-900 dark:text-white mb-4">Appearance</h3>
+                        <div className="flex bg-gray-100 dark:bg-zinc-900 p-1 rounded-xl transition-colors duration-300">
+                            <button
+                                onClick={() => setTheme('light')}
+                                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${theme === 'light'
+                                    ? 'bg-white shadow-sm text-black'
+                                    : 'text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                                    }`}
+                            >
+                                <Sun className="w-4 h-4" /> Light
+                            </button>
+                            <button
+                                onClick={() => setTheme('dark')}
+                                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${theme === 'dark'
+                                    ? 'bg-zinc-800 shadow-sm text-white'
+                                    : 'text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                                    }`}
+                            >
+                                <Moon className="w-4 h-4" /> Dark
+                            </button>
+                        </div>
+                    </div>
+
                     {/* Style Preferences Section */}
-                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                        <h3 className="font-serif font-bold text-lg text-gray-900 mb-4">Your Style Profile</h3>
+                    <div className="bg-white dark:bg-black rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800 transition-colors duration-300">
+                        <h3 className="font-serif font-bold text-lg text-gray-900 dark:text-white mb-4">Your Style Profile</h3>
                         <StyleSelector
                             selectedStyles={profile?.stylePreferences || []}
                             onChange={(styles) => {
@@ -42,14 +71,14 @@ export default function ProfileSettings() {
                                 }
                             }}
                         />
-                        <p className="text-xs text-gray-400 mt-4">We use these to personalize your shop recommendations.</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">We use these to personalize your shop recommendations.</p>
                     </div>
 
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-2">Account</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 ml-2">Account</h3>
 
                     <button
                         onClick={signOut}
-                        className="w-full bg-white rounded-xl p-4 flex items-center gap-3 text-red-500 font-medium shadow-sm border border-gray-100 hover:bg-red-50 transition-colors"
+                        className="w-full bg-white dark:bg-black rounded-xl p-4 flex items-center gap-3 text-red-500 font-medium shadow-sm border border-gray-100 dark:border-zinc-800 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors duration-300"
                     >
                         <LogOut className="w-5 h-5" />
                         Sign Out
@@ -57,7 +86,7 @@ export default function ProfileSettings() {
                 </div>
 
                 <div className="mt-12 text-center">
-                    <p className="text-gray-300 text-xs">Version 1.0.0</p>
+                    <p className="text-gray-300 dark:text-gray-700 text-xs">Version 1.0.0</p>
                 </div>
             </div>
         </div>

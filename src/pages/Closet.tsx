@@ -19,29 +19,26 @@ export default function Closet() {
         : items.filter(item => item.category === activeCategory);
 
     return (
-        <div className="p-4 pt-8 min-h-full bg-gray-50/50">
-            <header className="mb-6 sticky top-0 bg-gray-50/95 backdrop-blur-sm z-10 py-2">
+        <div className="p-4 pt-8 min-h-full bg-gray-50/50 dark:bg-black transition-colors duration-300">
+            <header className="mb-6 sticky top-0 bg-gray-50/95 dark:bg-black/95 backdrop-blur-sm z-10 py-2 transition-colors duration-300">
                 <div className="flex justify-between items-center mb-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">My Closet</h1>
-                        <p className="text-gray-500 text-sm font-medium">{items.length} items</p>
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">My Closet</h1>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">{items.length} items</p>
                     </div>
                     <div className="flex gap-2">
-                        <Link to="/settings" className="p-2 bg-white rounded-full shadow-sm border border-gray-100 text-gray-600 hover:text-black transition-colors">
+                        <Link to="/settings" className="p-2 bg-white dark:bg-zinc-800 rounded-full shadow-sm border border-gray-100 dark:border-zinc-700 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors">
                             <span className="sr-only">Settings</span>
-                            <div className="w-8 h-8 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
+                            <div className="w-8 h-8 bg-gray-100 dark:bg-zinc-700 rounded-full overflow-hidden border border-gray-200 dark:border-zinc-600">
                                 {profile?.avatarUrl ? (
                                     <img src={profile.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                        <span className="text-xs text-gray-500">?</span>
+                                    <div className="w-full h-full bg-gray-200 dark:bg-zinc-700 flex items-center justify-center">
+                                        <span className="text-xs text-gray-500 dark:text-gray-400">?</span>
                                     </div>
                                 )}
                             </div>
                         </Link>
-                        {/* <button className="p-2 bg-white rounded-full shadow-sm border border-gray-100 text-gray-600 hover:text-indigo-600 transition-colors">
-                            <Search className="w-5 h-5" />
-                        </button> */}
                     </div>
                 </div>
 
@@ -54,8 +51,8 @@ export default function Closet() {
                             className={cn(
                                 "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200",
                                 activeCategory === cat
-                                    ? "bg-black text-white shadow-md shadow-gray-300"
-                                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                                    ? "bg-black dark:bg-white text-white dark:text-black shadow-md shadow-gray-300 dark:shadow-zinc-800"
+                                    : "bg-white dark:bg-zinc-900 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800"
                             )}
                         >
                             {cat}
@@ -66,13 +63,13 @@ export default function Closet() {
 
             {/* Grid */}
             {filteredItems.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-center">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <Plus className="w-8 h-8 text-gray-400" />
+                <div className="flex flex-col items-center justify-center py-20 text-center transition-colors duration-300">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-900 rounded-full flex items-center justify-center mb-4">
+                        <Plus className="w-8 h-8 text-gray-400 dark:text-gray-600" />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-1">No items yet</h3>
-                    <p className="text-gray-500 mb-6 max-w-[200px]">Add your first item to start building your closet.</p>
-                    <Link to="/upload" className="text-black font-medium hover:underline">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">No items yet</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-[200px]">Add your first item to start building your closet.</p>
+                    <Link to="/upload" className="text-black dark:text-white font-medium hover:underline">
                         Add New Item
                     </Link>
                 </div>
@@ -81,18 +78,20 @@ export default function Closet() {
                     {filteredItems.map((item) => (
                         <Card
                             key={item.id}
-                            className="group relative aspect-[3/4] border-none shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden bg-white"
+                            className="group relative aspect-[3/4] border-none shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden bg-white dark:bg-zinc-800"
                         >
-                            <img
-                                src={item.image}
-                                alt={item.category}
-                                crossOrigin="anonymous"
-                                referrerPolicy="no-referrer"
-                                onError={(e) => {
-                                    (e.target as HTMLImageElement).src = 'https://placehold.co/400x600?text=Image+Error';
-                                }}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            />
+                            <div className="flex items-center justify-center p-6 h-full w-full">
+                                <img
+                                    src={item.image}
+                                    alt={item.category}
+                                    crossOrigin="anonymous"
+                                    referrerPolicy="no-referrer"
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).src = 'https://placehold.co/400x600?text=Image+Error';
+                                    }}
+                                    className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-xl"
+                                />
+                            </div>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
                                 <div className="flex justify-between items-end w-full">
                                     <span className="text-white font-medium text-sm translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
